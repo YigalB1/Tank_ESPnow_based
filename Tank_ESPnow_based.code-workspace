@@ -2,6 +2,10 @@
 	"folders": [
 		{
 			"path": "Tank_ESPnow_motor_control"
+		},
+		{
+			"name": "Tank_ESPnow_remote_control",
+			"path": "Tank_ESPnow_remote_control"
 		}
 	],
 	"settings": {}
