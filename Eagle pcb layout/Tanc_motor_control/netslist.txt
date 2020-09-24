@@ -1,0 +1,52 @@
+Netlist
+
+Exported from try1.sch at 9/23/2020 11:06 PM
+
+EAGLE Version 9.6.2 Copyright (c) 1988-2020 Autodesk, Inc.
+
+Net            Part     Pad      Pin        Sheet
+
+5V             U$1      JP2.8    5V         1
+
+GND            TB1      GND3     GND3       1
+               U$1      JP2.7    GND        1
+
+GPIO0          TB1      AIN2     AIN2       1
+               U$1      JP2.5    D3         1
+
+GPIO2          TB1      PWMA     PWMA       1
+               U$1      JP2.6    D4         1
+
+GPIO4          TB1      AIN1     AIN1       1
+               U$1      JP2.4    D2         1
+
+GPIO5          TB1      BIN1     BIN1       1
+               U$1      JP2.3    D1         1
+
+GPIO12         TB1      BIN2     BIN2       1
+               U$1      JP1.5    D6         1
+
+GPIO16         TB1      PWMB     PWMB       1
+               U$1      JP1.3    D0         1
+
+MOTOR1A        JP1      2        2          1
+               TB1      A1       A1         1
+
+MOTOR1B        JP1      1        1          1
+               TB1      A2       A2         1
+
+MOTOR2A        JP3      2        2          1
+               TB1      B1       B1         1
+
+MOTOR2B        JP3      1        1          1
+               TB1      B2       B2         1
+
+MOTOR_IN_GND   JP2      1        1          1
+               TB1      GND1     GND1       1
+
+MOTOR_IN_POWER JP2      2        2          1
+               TB1      VM       VM         1
+
+VCC            TB1      VCC      VCC        1
+               U$1      JP1.8    3V3        1
+
