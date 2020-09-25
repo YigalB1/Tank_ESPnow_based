@@ -132,12 +132,17 @@ class Sensor {
 }; // of Sensor class
 
 class Tank {
+  bool STDBY = false; // power consumption mode: TBD
   public:
   Motor left_motor;
   Motor right_motor;
-  void tank_init(int _l_int1,int _l_int2, int _l_pwm,int _r_int1,int _r_int2, int _r_pwm) {  
-    left_motor.init(_l_int1,_l_int2,_l_pwm);
-    right_motor.init(_r_int1,_r_int2,_r_pwm);
+
+  void tank_init(int _l_int1_pin,int _l_int2_pin, int _l_pwm_pin,int _r_int1_pin,int _r_int2_pin, int _r_pwm_pin,int _stby_pin) {  
+    pinMode(_stby_pin, OUTPUT);
+    STDBY = false; // starting with stdby mode
+    digitalWrite(_stby_pin,HIGH);
+    left_motor.init(_l_int1_pin,_l_int2_pin,_l_pwm_pin);
+    right_motor.init(_r_int1_pin,_r_int2_pin,_r_pwm_pin);
   }
 
   void tank_stop() {
