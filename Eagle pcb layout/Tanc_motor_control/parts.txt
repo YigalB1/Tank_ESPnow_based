@@ -1,0 +1,15 @@
+Partlist
+
+Exported from try1.sch at 9/23/2020 11:06 PM
+
+EAGLE Version 9.6.2 Copyright (c) 1988-2020 Autodesk, Inc.
+
+Assembly variant: 
+
+Part     Value          Device        Package       Library     Sheet
+
+JP1                     PINHD-1X2/90  1X02/90       pinhead     1
+JP2                     PINHD-1X2/90  1X02/90       pinhead     1
+JP3                     PINHD-1X2/90  1X02/90       pinhead     1
+TB1      TB6612FNG      TB6612FNG     TB6612FNG     TB6612FNG   1
+U$1      WEMOS-D1-MINI  WEMOS-D1-MINI WEMOS-D1-MINI diy-modules 1
