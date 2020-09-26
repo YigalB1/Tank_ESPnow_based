@@ -16,9 +16,9 @@ class Motor {
     motor_en1 = _in1;
     motor_en2 = _in2;
     motor_pwm = _pwm;
-    pinMode(motor_en1, OUTPUT);
-    pinMode(motor_en2, OUTPUT);
-    pinMode(motor_pwm, OUTPUT);
+    //pinMode(motor_en1, OUTPUT);
+    //pinMode(motor_en2, OUTPUT);
+    //pinMode(motor_pwm, OUTPUT);
     speed=0;
   } // of INIT routine
 
@@ -48,14 +48,21 @@ class Motor {
   }
 */
 
-  void Go_left_motor(int _speed) {
+  void Go_left(int _l_speed, int _r_speed) {
 
   }
 
-    void Go_right_motor(int _speed) {
+    void Go_right(int _l_speed, int _r_speed) {
     
   }
 
+  void Go_pivot_left(int _l_speed, int _r_speed) {
+
+  }
+
+  public: void Go_pivot_right(int _speed) {
+
+  }
 
 
     void Go_forward ( int _speed_) {
@@ -78,9 +85,6 @@ class Motor {
       digitalWrite(motor_en1, LOW);
       digitalWrite(motor_en2, LOW);
       
-      digitalWrite(GREEN_LED, LOW );
-      digitalWrite(YELLOW_LED,HIGH);
-      digitalWrite(RED_LED,   LOW );
     } // of STOP routine
 
 
@@ -131,6 +135,10 @@ class Sensor {
 
 }; // of Sensor class
 
+
+
+
+
 class Tank {
   bool STDBY = false; // power consumption mode: TBD
   public:
@@ -145,47 +153,100 @@ class Tank {
     right_motor.init(_r_int1_pin,_r_int2_pin,_r_pwm_pin);
   }
 
+
+// XXXXXXXXXXXXX
   void tank_stop() {
     left_motor.stop();
     right_motor.stop();
   }
 
-  void tank_move(int _x,int _y) {
-      if (0 == _x && 0 == _y) {
-      tank_stop();
-      return;
 
-      //int loc_x = _x;
-      //int loc_y = _y;
+  void Tank_forward(int _speed) {
+    left_motor.Go_forward(_speed);
+    right_motor.Go_forward(_speed);    
+  }
+
+  void Tank_backward(int _speed) {
+      left_motor.Go_backward(_speed);
+      right_motor.Go_backward(_speed);    
+    }
+
+  void Tank_forward_turn(int _l_speed,int _r_speed) {
+    left_motor.Go_forward(_l_speed);
+    right_motor.Go_forward(_r_speed);    
+  }  
+
+  void Tank_backward_turn(int _l_speed,int _r_speed) {
+    left_motor.Go_backward(_l_speed);
+    right_motor.Go_backward(_r_speed);    
+  }
+
+  void Tank_left_pivot(int _speed) {
+    left_motor.Go_backward(_speed);
+    right_motor.Go_forward(_speed);    
+  }
+
+  void Tank_right_pivot(int _speed) {
+    left_motor.Go_forward(_speed);
+    right_motor.Go_backward(_speed);    
+  }
+
+  void tank_move(int _x,int _y) {    
+
+      if (0 == _x && 0 == _y) {
+        tank_stop();
+        Serial.println("stopping  ");
+        return;
+      }
+
+    
       int ratio;
       if (0 == _y || 0 == _x)
         ratio=1;      
       else
         ratio = abs(int(_x/_y));
 
+/*
+      Serial.print("x / y / ratio : ");
+      Serial.print(_x);
+      Serial.print("  ");
+      Serial.print(_y);
+      Serial.print("  ");
+      Serial.println(ratio);
+*/      
+
+
       if (_x>=0 && _y>0) {
+        // 1Q
         // forward and right, right motor slowing
         // if x=0 it is fully FWD
         left_motor.Go_forward(_y);
         right_motor.Go_forward(abs(_y*ratio));
+        Serial.println(" 1Q ");
         return;
       }
       if (_x>=0 && _y<0) {
+        // 2Q
         // backward and left, left engine slowing
         left_motor.Go_backward(abs(_y));
         right_motor.Go_backward(abs(_y*ratio));
+        Serial.println(" 2Q ");
         return;
       }
       if (_x<=0 && _y<0) {
+        // 3Q
         // bacward and right, right engine slowing
-        left_motor.Go_backward(_y);
+        left_motor.Go_backward(abs(_y));
         right_motor.Go_backward(abs(_y*ratio));
+        Serial.println(" 3Q ");
         return;
       }
       if (_x<0 && _y>0) {
+        // 4Q
         // forward and left, left motor slowing
-        left_motor.Go_forward(int(_y*ratio));
-        right_motor.Go_forward(_y);
+        left_motor.Go_forward(abs(int(_y*ratio)));
+        right_motor.Go_forward(abs(_y));
+        Serial.println(" 4Q ");
         return;
       }
 
@@ -208,5 +269,60 @@ class Tank {
 
    }  // end of tank_move
 
-  }
+  
+
+void test_moves() {
+  int test_speed = 500;
+  int l_speed = 500;
+  int r_speed = 500;
+  int test_time = 1000;
+  int stop_time = 500;
+  
+  // test Foward
+  Serial.println("in test_moves: Forward");
+  Tank_forward(test_speed);
+  delay(test_time);
+  tank_stop();
+  delay(stop_time);
+
+  // test Backward
+  Serial.println("in test_moves: Backward");
+  Tank_backward(test_speed);
+  delay(test_time);
+  delay(stop_time);
+
+  // test Left turn
+  Serial.println("in test_moves: Left turn");
+  Tank_forward_turn(l_speed,r_speed);
+  delay(test_time);
+  delay(stop_time);
+
+  // test Right turn
+  Serial.println("in test_moves: Right turn");
+  Tank_forward_turn(l_speed,r_speed);
+  delay(test_time);
+  delay(stop_time);
+
+  // test right pivot
+  Serial.println("in test_moves: Right Pivot");
+  Tank_right_pivot(test_speed);
+  delay(test_time);
+  delay(stop_time);
+
+  // test left pivot
+  Serial.println("in test_moves: LKeft Pivot");
+  Tank_left_pivot(test_speed);
+  delay(test_time);
+  delay(stop_time);
+
+
+} // of test_moves
+
+
+
+
+
+
+
+
 }; // of TANK class

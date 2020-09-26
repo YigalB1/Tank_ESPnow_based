@@ -1,9 +1,9 @@
 //#define MOTOR_PWM       5   // D1   PWM pin: between 0 - 1023 analog, or 0 off 1 full speed digital
 //#define MOTOR_DIR       0   // D3   0 forward. 1 backward
 #define ON_BOARD_LED    2   //D4 Or GPIO-2 of nodemcu ESP8266
-#define GREEN_LED       12  //D6 Or GPIO-2 of nodemcu ESP8266
-#define YELLOW_LED      13  //D7 Or GPIO-2 of nodemcu ESP8266
-#define RED_LED         15  //D8 Or GPIO-2 of nodemcu ESP8266
+//#define GREEN_LED       12  //D6 Or GPIO-2 of nodemcu ESP8266
+//#define YELLOW_LED      13  //D7 Or GPIO-2 of nodemcu ESP8266
+//#define RED_LED         15  //D8 Or GPIO-2 of nodemcu ESP8266
 
 const int JUNK_VAL = 7777;
 const int DIST_BUFF_SIZE = 20;
