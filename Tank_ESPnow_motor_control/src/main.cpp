@@ -35,7 +35,7 @@ pinMode(PWMA_pin, OUTPUT);
 pinMode(BIN1_pin, OUTPUT);
 pinMode(BIN2_pin, OUTPUT);
 pinMode(PWMB_pin, OUTPUT);
-
+pinMode(Spare_LED, OUTPUT);
 
 pinMode(LED_MOV_pin, OUTPUT);
 
