@@ -1,6 +1,6 @@
 //#define MOTOR_PWM       5   // D1   PWM pin: between 0 - 1023 analog, or 0 off 1 full speed digital
 //#define MOTOR_DIR       0   // D3   0 forward. 1 backward
-#define ON_BOARD_LED    2   //D4 Or GPIO-2 of nodemcu ESP8266
+//#define ON_BOARD_LED    2   //D4 Or GPIO-2 of nodemcu ESP8266
 //#define GREEN_LED       12  //D6 Or GPIO-2 of nodemcu ESP8266
 //#define YELLOW_LED      13  //D7 Or GPIO-2 of nodemcu ESP8266
 //#define RED_LED         15  //D8 Or GPIO-2 of nodemcu ESP8266
@@ -21,6 +21,16 @@ const int LEFT  = 0;
 const int RIGHT = 1;
 const int FORWARD = 0;
 const int BACKARD = 0;
+
+
+// for Esp32 (DIFFERENT THAN ESPP8266/WEMOS)
+// setting PWM properties
+const int freq = 5000;
+const int L_PWM_Channel = 0;
+const int R_PWM_Channel = 1;
+const int resolution = 10; // 10 bit resulatio: speed until 1023 . Maybe 8? 
+
+
 
 const int ZERO  = 0;
 //const int LEFT_DIR  = 1; // it should have been like LEFT & RIGHT, but sto match the  real engine direction.

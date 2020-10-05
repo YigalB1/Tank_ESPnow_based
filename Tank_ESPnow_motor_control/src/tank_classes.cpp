@@ -1,5 +1,7 @@
 #include<tank_headers.h>
-#include<ESP8266WiFi.h>
+#include "WiFi.h"
+//#include "analogWrite.h"
+//#include<ESP8266WiFi.h>
 
 
 
@@ -7,18 +9,26 @@ class Motor {
   public:
   int motor_en1;
   int motor_en2;
-  int motor_pwm;
+  int motor_pwm;    // for ESP8266 style
+  int pwm_channel;  // for ESP32 style
   int speed = 0; // in work, to use as the speed of the train instead of global variable
   int direction = FORWARD;
   int distance = 0;
   
-  void init(int _in1, int _in2, int _pwm) {
+  
+  void init(int _in1, int _in2, int _pwm, int _pwm_channel) {
+    // _pwm for ESp8266 style
+    // _pwm_channel for esp32 style
     motor_en1 = _in1;
     motor_en2 = _in2;
     motor_pwm = _pwm;
-    //pinMode(motor_en1, OUTPUT);
-    //pinMode(motor_en2, OUTPUT);
-    //pinMode(motor_pwm, OUTPUT);
+    pwm_channel = _pwm_channel;
+
+
+
+
+
+
     speed=0;
   } // of INIT routine
 
@@ -68,20 +78,26 @@ class Motor {
     void Go_forward ( int _speed_) {
       digitalWrite(motor_en1, HIGH);
       digitalWrite(motor_en2, LOW );
-      analogWrite(motor_pwm, _speed_);
+      //analogWrite(motor_pwm, _speed_);
+      ledcWrite(pwm_channel, _speed_);
+
+
+
     } // of GO LEFT routine
 
 
     void Go_backward ( int _speed_) {
       digitalWrite(motor_en1, LOW);
       digitalWrite(motor_en2, HIGH );
-      analogWrite(motor_pwm, _speed_);
+      //analogWrite(motor_pwm, _speed_);
+      ledcWrite(pwm_channel, _speed_);
     } // of GO RIGHT routine
 
 
     void stop () {
       speed = ZERO;
-      analogWrite(motor_pwm,  ZERO);
+      //analogWrite(motor_pwm,  ZERO);
+      ledcWrite(pwm_channel, ZERO);
       digitalWrite(motor_en1, LOW);
       digitalWrite(motor_en2, LOW);
       
@@ -145,12 +161,15 @@ class Tank {
   Motor left_motor;
   Motor right_motor;
 
-  void tank_init(int _l_int1_pin,int _l_int2_pin, int _l_pwm_pin,int _r_int1_pin,int _r_int2_pin, int _r_pwm_pin,int _stby_pin) {  
+  void tank_init(int _l_int1_pin,int _l_int2_pin, int _l_pwm_pin,int _l_pwm_channel, int _r_int1_pin,int _r_int2_pin, int _r_pwm_pin, int _r_pwm_channel,int _stby_pin) {  
+    // the pwm_pin is for ESp8266/WEMOS style, pwm_channel is for ESP32 style
+    
+    
     pinMode(_stby_pin, OUTPUT);
     STDBY = false; // starting with stdby mode
     digitalWrite(_stby_pin,HIGH);
-    left_motor.init(_l_int1_pin,_l_int2_pin,_l_pwm_pin);
-    right_motor.init(_r_int1_pin,_r_int2_pin,_r_pwm_pin);
+    left_motor.init(_l_int1_pin,_l_int2_pin,_l_pwm_pin,_l_pwm_channel);
+    right_motor.init(_r_int1_pin,_r_int2_pin,_r_pwm_pin,_r_pwm_channel);
   }
 
 

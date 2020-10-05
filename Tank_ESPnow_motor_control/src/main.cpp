@@ -1,5 +1,7 @@
-#include<ESP8266WiFi.h>
-#include<espnow.h>
+#include "WiFi.h"
+#include <esp_now.h>
+//#include<ESP8266WiFi.h>
+//#include <espnow.h>
 #include<tank_classes.cpp>
 //#include <SparkFun_TB6612.h>  //  library for the TB6612 with Motor class & functions
  
@@ -7,15 +9,15 @@
 // the default pins listed are the ones used on the Redbot (ROB-12097) with
 // the exception of STBY which the Redbot controls with a physical switch
 
-#define AIN1_pin     4 // D2
-#define BIN1_pin     5 // D1
-#define AIN2_pin     0 // D3
+#define AIN1_pin     26 // D2
+#define BIN1_pin     14 // D1
+#define AIN2_pin     25 // D3
 #define BIN2_pin     12 //   (was GPIO3 (RX) changes to GPIO12  D6
-#define PWMA_pin     13 // D7      was: 2 // D4
-#define PWMB_pin     16 // TX - changed
-#define STBY_pin     14 // D5 , when low, all stop, low current consumption
-#define LED_MOV_pin  2  // D4 , when the tank is moving, on board LED
-#define Spare_LED    15 // D8, currently not in use
+#define PWMA_pin     33 // D7      was: 2 // D4
+#define PWMB_pin     13 // TX - changed
+#define STBY_pin     27 // D5 , when low, all stop, low current consumption
+#define LED_MOV_pin  15 // D4 , when the tank is moving, on board LED
+//#define Spare_LED    15 // D8, currently not in use
 
 
 Tank my_tank;
@@ -35,11 +37,23 @@ pinMode(PWMA_pin, OUTPUT);
 pinMode(BIN1_pin, OUTPUT);
 pinMode(BIN2_pin, OUTPUT);
 pinMode(PWMB_pin, OUTPUT);
-pinMode(Spare_LED, OUTPUT);
+//pinMode(Spare_LED, OUTPUT);
 
 pinMode(LED_MOV_pin, OUTPUT);
 
-my_tank.tank_init(AIN1_pin,AIN2_pin,PWMA_pin,BIN1_pin,BIN2_pin,PWMB_pin,STBY_pin);
+// for ESP32 - different than ESp8266/WEMOS
+// example from: https://randomnerdtutorials.com/esp32-pwm-arduino-ide/
+// configure LED PWM functionalitites
+  ledcSetup(L_PWM_Channel, freq, resolution);
+  ledcSetup(R_PWM_Channel, freq, resolution);
+  
+  // attach the channel to the GPIO to be controlled
+  ledcAttachPin(PWMA_pin, L_PWM_Channel);
+  ledcAttachPin(PWMA_pin, R_PWM_Channel);
+
+
+
+my_tank.tank_init(AIN1_pin,AIN2_pin,PWMA_pin, L_PWM_Channel, BIN1_pin,BIN2_pin,PWMB_pin, R_PWM_Channel, STBY_pin);
 
  Serial.begin(9600);
  Serial.print("");
@@ -106,7 +120,7 @@ void test_hw() {
 int delay_time = 500;
 
    digitalWrite(LED_MOV_pin,HIGH);
-   digitalWrite(Spare_LED,HIGH);
+   //digitalWrite(Spare_LED,HIGH);
    delay(1000);   
    Serial.print("1.");
    digitalWrite(AIN1_pin,HIGH);
@@ -133,16 +147,16 @@ int delay_time = 500;
    digitalWrite(BIN2_pin,LOW);
    delay(delay_time);
    Serial.print("9.");
-   analogWrite(PWMA_pin, 500);
-   Serial.print("10.");
-   delay(delay_time);
+   //analogWrite(PWMA_pin, 500);
+   //Serial.print("10.");
+   //delay(delay_time);
    Serial.println("......");
    delay(delay_time);
-   analogWrite(PWMB_pin, 500);
-   Serial.println("11");
-   delay(delay_time);  
+   //analogWrite(PWMB_pin, 500);
+   //Serial.println("11");
+   //delay(delay_time);  
  
    digitalWrite(LED_MOV_pin,LOW);
-   digitalWrite(Spare_LED,LOW);
+   //digitalWrite(Spare_LED,LOW);
 
 }
