@@ -1,6 +1,7 @@
 #include<tank_headers.h>
 #include "WiFi.h"
-//#include "analogWrite.h"
+#include <ESP32Servo.h>
+#include <NewPing.h>
 //#include<ESP8266WiFi.h>
 
 
@@ -14,6 +15,7 @@ class Motor {
   int speed = 0; // in work, to use as the speed of the train instead of global variable
   int direction = FORWARD;
   int distance = 0;
+  
   
   
   void init(int _in1, int _in2, int _pwm, int _pwm_channel) {
@@ -59,19 +61,15 @@ class Motor {
 */
 
   void Go_left(int _l_speed, int _r_speed) {
-
   }
 
     void Go_right(int _l_speed, int _r_speed) {
-    
   }
 
   void Go_pivot_left(int _l_speed, int _r_speed) {
-
   }
 
   public: void Go_pivot_right(int _speed) {
-
   }
 
 
@@ -145,10 +143,29 @@ void slow_down() {
 
 };  // of Motor class
 
+// no need for this class? there is a servo class builtin
+class us_Servo {
 
+  int angle_f, angle_b,angle_r,angle_l;
+  void init() {
+  }
+
+  
+};
 
 class Sensor {
+  int trig_pin;
+  int echo_pin;
 
+
+  void init(int _trig, int _echo) {
+    trig_pin = _trig;
+    echo_pin = _echo;
+  } 
+
+  int read_dist() {
+    return(77);
+  }
 }; // of Sensor class
 
 
@@ -160,8 +177,13 @@ class Tank {
   public:
   Motor left_motor;
   Motor right_motor;
+  Servo f_servo; //initialize a servo object
+  Servo b_servo; //initialize a servo object
+  Servo r_servo; //initialize a servo object
+  Servo l_servo; //initialize a servo object
+  NewPing sonar (32, F_ECHO_PIN, MAX_DISTANCE);
 
-  void tank_init(int _l_int1_pin,int _l_int2_pin, int _l_pwm_pin,int _l_pwm_channel, int _r_int1_pin,int _r_int2_pin, int _r_pwm_pin, int _r_pwm_channel,int _stby_pin) {  
+  void tank_init_motors(int _l_int1_pin,int _l_int2_pin, int _l_pwm_pin,int _l_pwm_channel, int _r_int1_pin,int _r_int2_pin, int _r_pwm_pin, int _r_pwm_channel,int _stby_pin) {  
     // the pwm_pin is for ESp8266/WEMOS style, pwm_channel is for ESP32 style
     
     
@@ -171,6 +193,17 @@ class Tank {
     left_motor.init(_l_int1_pin,_l_int2_pin,_l_pwm_pin,_l_pwm_channel);
     right_motor.init(_r_int1_pin,_r_int2_pin,_r_pwm_pin,_r_pwm_channel);
   }
+
+  void tank_init_servos(int _F_SERVO_PWM, int _B_SERVO_PWM, int _R_SERVO_PWM, int _L_SERVO_PWM) {
+    f_servo.attach(F_SERVO_PWM); // connect the servo with GPIO
+    b_servo.attach(B_SERVO_PWM); // connect the servo with GPIO
+    r_servo.attach(R_SERVO_PWM); // connect the servo with GPIO
+    l_servo.attach(L_SERVO_PWM); // connect the servo with GPIO
+  }
+
+  void tank_init_us_sensors() {
+  }
+
 
 
 // XXXXXXXXXXXXX
@@ -337,7 +370,75 @@ void test_moves() {
 
 } // of test_moves
 
+// basic HW test, to make sure pins don;t create issues
+// to delete when all works fine
+void test_hw() {
+int delay_time = 200;
 
+   digitalWrite(LED_MOV_pin,HIGH);
+   //digitalWrite(Spare_LED,HIGH);
+   delay(1000);   
+   Serial.print("1.");
+   digitalWrite(AIN1_pin,HIGH);
+   delay(delay_time);
+   Serial.print("2.");
+   digitalWrite(AIN1_pin,LOW);
+   delay(delay_time);
+   Serial.print("3.");
+   digitalWrite(AIN2_pin,HIGH);
+   delay(delay_time);
+   Serial.print("4.");
+   digitalWrite(AIN2_pin,LOW);
+   delay(delay_time);
+   Serial.print("5.");
+   digitalWrite(BIN1_pin,HIGH);
+   delay(delay_time);
+   Serial.print("6.");
+   digitalWrite(BIN1_pin,LOW);
+   delay(delay_time);
+   Serial.print("7.");
+   digitalWrite(BIN2_pin,HIGH);
+   delay(delay_time);
+   Serial.print("8.");  
+   digitalWrite(BIN2_pin,LOW);
+   delay(delay_time);
+   Serial.print("9.");
+   //analogWrite(PWMA_pin, 500);
+   //Serial.print("10.");
+   //delay(delay_time);
+   Serial.println("......");
+   delay(delay_time);
+   //analogWrite(PWMB_pin, 500);
+   //Serial.println("11");
+   //delay(delay_time);  
+ 
+   digitalWrite(LED_MOV_pin,LOW);
+   //digitalWrite(Spare_LED,LOW);
+
+}
+
+void test_servo(Servo _servo_name) {
+  for(int angle = 0; angle < 180; angle += 10) {
+    _servo_name.write(angle);
+    delay(400);
+    }
+    _servo_name.write(ZERO);
+    delay(100); // move from 180 to 0 degrees with a negative angle of 5 for(angle = 180; angle>=1; angle-=5)
+  }
+
+
+void tank_test() {
+  test_hw();
+  //test_moves();
+  Serial.println("testing Servo: Front");
+  test_servo(f_servo);
+  Serial.println("testing Servo: Back");
+  test_servo(b_servo);
+  Serial.println("testing Servo: Right");
+  test_servo(r_servo);
+  Serial.println("testing Servo: Left");
+  test_servo(l_servo);
+}
 
 
 
