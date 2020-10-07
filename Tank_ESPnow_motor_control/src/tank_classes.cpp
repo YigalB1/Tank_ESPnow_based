@@ -1,7 +1,7 @@
 #include<tank_headers.h>
 #include "WiFi.h"
 #include <ESP32Servo.h>
-#include <NewPing.h>
+//#include <NewPing.h>
 //#include<ESP8266WiFi.h>
 
 
@@ -25,12 +25,6 @@ class Motor {
     motor_en2 = _in2;
     motor_pwm = _pwm;
     pwm_channel = _pwm_channel;
-
-
-
-
-
-
     speed=0;
   } // of INIT routine
 
@@ -133,16 +127,13 @@ class Motor {
 void slow_down() {
   if (fixed_speed)
     return; // speed is not changing
-
   speed = MIN_SPEED;
 } // of SLOW DOWN
 
-
-
-
-
 };  // of Motor class
 
+
+/*
 // no need for this class? there is a servo class builtin
 class us_Servo {
 
@@ -152,11 +143,16 @@ class us_Servo {
 
   
 };
+*/
 
-class Sensor {
+class US_Sensor {
+  public:
   int trig_pin;
   int echo_pin;
 
+  void dum() {
+
+  }
 
   void init(int _trig, int _echo) {
     trig_pin = _trig;
@@ -164,7 +160,19 @@ class Sensor {
   } 
 
   int read_dist() {
-    return(77);
+    float duration_us, distance_cm;
+
+    digitalWrite(trig_pin, LOW);
+    delayMicroseconds(2);
+
+    digitalWrite(trig_pin, HIGH);
+    delayMicroseconds(10);
+
+    digitalWrite(trig_pin, LOW);
+    duration_us  = pulseIn(echo_pin, HIGH);
+     distance_cm = 0.017 * duration_us;
+
+    return(distance_cm);
   }
 }; // of Sensor class
 
@@ -181,7 +189,12 @@ class Tank {
   Servo b_servo; //initialize a servo object
   Servo r_servo; //initialize a servo object
   Servo l_servo; //initialize a servo object
-  NewPing sonar (32, F_ECHO_PIN, MAX_DISTANCE);
+  
+  US_Sensor f_sensor;
+  US_Sensor b_sensor;
+  US_Sensor r_sensor;
+  US_Sensor l_sensor;
+
 
   void tank_init_motors(int _l_int1_pin,int _l_int2_pin, int _l_pwm_pin,int _l_pwm_channel, int _r_int1_pin,int _r_int2_pin, int _r_pwm_pin, int _r_pwm_channel,int _stby_pin) {  
     // the pwm_pin is for ESp8266/WEMOS style, pwm_channel is for ESP32 style
@@ -202,6 +215,10 @@ class Tank {
   }
 
   void tank_init_us_sensors() {
+    f_sensor.init(F_TRIG_PIN,F_ECHO_PIN);
+    b_sensor.init(B_TRIG_PIN,B_ECHO_PIN);
+    r_sensor.init(R_TRIG_PIN,R_ECHO_PIN);
+    l_sensor.init(L_TRIG_PIN,L_ECHO_PIN);
   }
 
 
@@ -426,9 +443,31 @@ void test_servo(Servo _servo_name) {
     delay(100); // move from 180 to 0 degrees with a negative angle of 5 for(angle = 180; angle>=1; angle-=5)
   }
 
+  void test_sensor(US_Sensor _S_Sensor, int _num,int _delay) {
+    for (int i=1;i<=_num;i++) {
+      int l_dist = _S_Sensor.read_dist();
+      Serial.print("Sensor reading: ");
+      Serial.println(l_dist);
+      delay(_delay);
+    }
+    
+  }
+
 
 void tank_test() {
   test_hw();
+
+  Serial.println("testing Sensor: Front");
+  test_sensor(f_sensor,5,200);
+  Serial.println("testing Sensor: Back");
+  test_sensor(b_sensor,10,200);
+  Serial.println("testing Sensor: Right");
+  test_sensor(r_sensor,10,200);
+  Serial.println("testing Sensor: left");
+  test_sensor(l_sensor,10,200);
+  return;
+
+
   //test_moves();
   Serial.println("testing Servo: Front");
   test_servo(f_servo);
@@ -438,6 +477,9 @@ void tank_test() {
   test_servo(r_servo);
   Serial.println("testing Servo: Left");
   test_servo(l_servo);
+
+
+
 }
 
 

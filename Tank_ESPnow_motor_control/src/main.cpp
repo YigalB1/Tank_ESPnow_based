@@ -21,7 +21,7 @@ Motor motor_right;
 int rc_x = 0;
 int rc_y = 0;
 
-void test_hw();
+//void test_hw();
  
 void setup()
 {
@@ -37,6 +37,19 @@ void setup()
    pinMode(BIN2_pin, OUTPUT);
    pinMode(PWMB_pin, OUTPUT);
    //pinMode(Spare_LED, OUTPUT);
+
+   pinMode(F_TRIG_PIN, OUTPUT);
+   pinMode(B_TRIG_PIN, OUTPUT);
+   pinMode(R_TRIG_PIN, OUTPUT);
+   pinMode(L_TRIG_PIN, OUTPUT);
+   pinMode(F_ECHO_PIN, INPUT);
+   pinMode(B_ECHO_PIN, INPUT);
+   pinMode(R_ECHO_PIN, INPUT);
+   pinMode(L_ECHO_PIN, INPUT);
+   
+
+
+
 
    pinMode(LED_MOV_pin, OUTPUT);
 

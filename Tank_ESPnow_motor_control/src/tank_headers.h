@@ -15,13 +15,21 @@
 #define LED_MOV_pin  15 // D4 , when the tank is moving, on board LED
 //#define Spare_LED    15 // D8, currently not in use
 
-#define F_SERVO_PWM  22 
-#define B_SERVO_PWM  18 
-#define R_SERVO_PWM  5 
-#define L_SERVO_PWM  17
-
-#define F_TRIG_PIN  32 
+#define F_TRIG_PIN  32
 #define F_ECHO_PIN  35
+#define B_TRIG_PIN  21
+#define B_ECHO_PIN  34
+#define R_TRIG_PIN  23
+#define R_ECHO_PIN  36
+#define L_TRIG_PIN  4
+#define L_ECHO_PIN  16
+
+#define F_SERVO_PWM 22
+#define B_SERVO_PWM 18
+#define R_SERVO_PWM 5
+#define L_SERVO_PWM 17
+
+const int trig1 = 32;
 
 const int JUNK_VAL = 7777;
 const int DIST_BUFF_SIZE = 20;

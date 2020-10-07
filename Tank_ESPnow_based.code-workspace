@@ -8,5 +8,9 @@
 			"path": "Tank_ESPnow_remote_control"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"iterator": "cpp"
+		}
+	}
 }
