@@ -10,7 +10,12 @@
 	],
 	"settings": {
 		"files.associations": {
-			"iterator": "cpp"
+			"iterator": "cpp",
+			"*.tcc": "cpp",
+			"fstream": "cpp",
+			"istream": "cpp",
+			"ostream": "cpp",
+			"sstream": "cpp"
 		}
 	}
 }

@@ -32,10 +32,10 @@ void setup()
    // pinMode(LED_BUILTIN, OUTPUT);  
    pinMode(AIN1_pin, OUTPUT);
    pinMode(AIN2_pin, OUTPUT);
-   pinMode(PWMA_pin, OUTPUT);
-   pinMode(BIN1_pin, OUTPUT);
+   //pinMode(PWMA_pin, OUTPUT);  // done later as ledcAttachPin
+   pinMode(BIN1_pin, OUTPUT);    // done later as ledcAttachPin
    pinMode(BIN2_pin, OUTPUT);
-   pinMode(PWMB_pin, OUTPUT);
+   //pinMode(PWMB_pin, OUTPUT);
    //pinMode(Spare_LED, OUTPUT);
 
    pinMode(F_TRIG_PIN, OUTPUT);
@@ -47,12 +47,10 @@ void setup()
    pinMode(R_ECHO_PIN, INPUT);
    pinMode(L_ECHO_PIN, INPUT);
    
-
-
-
-
+   pinMode(STBY_pin, OUTPUT);
    pinMode(LED_MOV_pin, OUTPUT);
 
+// For the tank DC motors
    // for ESP32 - different than ESp8266/WEMOS
    // example from: https://randomnerdtutorials.com/esp32-pwm-arduino-ide/
    // configure LED PWM functionalitites
@@ -61,23 +59,62 @@ void setup()
   
   // attach the channel to the GPIO to be controlled
   ledcAttachPin(PWMA_pin, L_PWM_Channel);
-  ledcAttachPin(PWMA_pin, R_PWM_Channel);
+  ledcAttachPin(PWMB_pin, R_PWM_Channel);
+
+
+
+// for the servo motors
+   ledcSetup(F_SERVO_Channel, freq, resolution);
+   ledcSetup(B_SERVO_Channel, freq, resolution);
+   ledcSetup(R_SERVO_Channel, freq, resolution);
+   ledcSetup(L_SERVO_Channel, freq, resolution);
+
+   ledcAttachPin(F_SERVO_PWM_PIN, F_SERVO_Channel);
+   ledcAttachPin(B_SERVO_PWM_PIN, B_SERVO_Channel);
+   ledcAttachPin(R_SERVO_PWM_PIN, R_SERVO_Channel);
+   ledcAttachPin(L_SERVO_PWM_PIN, L_SERVO_Channel);
+
 
 
 
    my_tank.tank_init_motors(AIN1_pin,AIN2_pin,PWMA_pin, L_PWM_Channel, BIN1_pin,BIN2_pin,PWMB_pin, R_PWM_Channel, STBY_pin);
-   my_tank.tank_init_servos(F_SERVO_PWM,B_SERVO_PWM,R_SERVO_PWM,L_SERVO_PWM);
-   my_tank.tank_init_us_sensors();
+   //my_tank.tank_init_servos(F_SERVO_PWM,B_SERVO_PWM,R_SERVO_PWM,L_SERVO_PWM);
+   //my_tank.tank_init_us_sensors();
 
-   my_tank.tank_test();
+   // my_tank.tank_test();
+
+   //Servo f_servo;
+   //f_servo.attach(F_SERVO_PWM); // connect the servo with GPIO
 
 
   //test_hw();
 } // of SETUP
  
  
-void loop()
+void loop() 
 {
+/*
+   // DEBUG
+   my_tank.set_motors_on();
+   digitalWrite(STBY_pin,HIGH);
+   Serial.println("testing duty_cycle");
+   for (int speed=50;speed<255;speed+=20) {
+     Serial.print(speed);
+     Serial.print("...");
+     ledcWrite(L_PWM_Channel, speed);
+     ledcWrite(R_PWM_Channel, speed);
+     delay(500);
+   }   
+   Serial.println("_____ end speed test");
+*/
+   my_tank.test_hw();
+   return;
+
+   
+
+
+
+
    // rc_x,rc_y are the readings from the joystick in the remote control
    // ranging from -1023 to 0 to 1023
    // is this IF necessary? probably not

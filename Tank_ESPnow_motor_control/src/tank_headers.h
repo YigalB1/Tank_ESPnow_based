@@ -9,7 +9,7 @@
 #define BIN1_pin     14 // D1
 #define AIN2_pin     25 // D3
 #define BIN2_pin     12 //   (was GPIO3 (RX) changes to GPIO12  D6
-#define PWMA_pin     33 // D7      was: 2 // D4
+#define PWMA_pin     33 // D7
 #define PWMB_pin     13 // TX - changed
 #define STBY_pin     27 // D5 , when low, all stop, low current consumption
 #define LED_MOV_pin  15 // D4 , when the tank is moving, on board LED
@@ -24,10 +24,17 @@
 #define L_TRIG_PIN  4
 #define L_ECHO_PIN  16
 
-#define F_SERVO_PWM 22
-#define B_SERVO_PWM 18
-#define R_SERVO_PWM 5
-#define L_SERVO_PWM 17
+#define F_SERVO_PWM_PIN 22
+#define B_SERVO_PWM_PIN 18
+#define R_SERVO_PWM_PIN 5
+#define L_SERVO_PWM_PIN 17
+
+
+
+
+
+
+
 
 const int trig1 = 32;
 
@@ -49,13 +56,21 @@ const int RIGHT = 1;
 const int FORWARD = 0;
 const int BACKARD = 0;
 
-
+// for DC motors
 // for Esp32 (DIFFERENT THAN ESPP8266/WEMOS)
 // setting PWM properties
 const int freq = 5000;
 const int L_PWM_Channel = 0;
 const int R_PWM_Channel = 1;
-const int resolution = 10; // 10 bit resulatio: speed until 1023 . Maybe 8? 
+const int resolution = 8; // 10 bit resulation: speed until 1023 . Maybe 8? 
+
+// for Servo motors
+const int F_SERVO_Channel = 2;
+const int B_SERVO_Channel = 3;
+const int R_SERVO_Channel = 4;
+const int L_SERVO_Channel = 5;
+
+
 
 
 

@@ -15,6 +15,7 @@ class Motor {
   int speed = 0; // in work, to use as the speed of the train instead of global variable
   int direction = FORWARD;
   int distance = 0;
+ 
   
   
   
@@ -27,6 +28,27 @@ class Motor {
     pwm_channel = _pwm_channel;
     speed=0;
   } // of INIT routine
+
+  void Go_forward ( int _speed_) {
+/*
+Serial.println("");
+Serial.print("  In go _FWD . _speed_:");
+Serial.print(_speed_);
+Serial.print("  pwm_channel:  ");
+Serial.print(pwm_channel);
+Serial.print("  motor_en1:  ");
+Serial.print(motor_en1);
+Serial.print("  motor_en2:  ");
+Serial.println(motor_en2);
+*/
+
+
+      speed = _speed_; // set the class global value
+      digitalWrite(motor_en1, HIGH);
+      digitalWrite(motor_en2, LOW );
+      //analogWrite(motor_pwm, _speed_);
+      ledcWrite(pwm_channel, speed);
+    } // of Go_forward
 
 /*
   String debug_msg() {
@@ -54,6 +76,10 @@ class Motor {
   }
 */
 
+
+ 
+
+
   void Go_left(int _l_speed, int _r_speed) {
   }
 
@@ -67,23 +93,16 @@ class Motor {
   }
 
 
-    void Go_forward ( int _speed_) {
-      digitalWrite(motor_en1, HIGH);
-      digitalWrite(motor_en2, LOW );
-      //analogWrite(motor_pwm, _speed_);
-      ledcWrite(pwm_channel, _speed_);
-
-
-
-    } // of GO LEFT routine
+    
 
 
     void Go_backward ( int _speed_) {
+      speed = _speed_; // set the class global value
       digitalWrite(motor_en1, LOW);
       digitalWrite(motor_en2, HIGH );
       //analogWrite(motor_pwm, _speed_);
-      ledcWrite(pwm_channel, _speed_);
-    } // of GO RIGHT routine
+      ledcWrite(pwm_channel, speed);
+    } // of Go_backward
 
 
     void stop () {
@@ -105,10 +124,11 @@ class Motor {
       }
         
       // speed is not fixed
-
       speed += SPEED_INC;
-      if (speed > MAX_SPEED)
+      if (speed > MAX_SPEED) {
         speed = MAX_SPEED;
+      }
+        
     }
     // ****************** decrease_speed **********************
     void decrease_speed() {
@@ -119,8 +139,10 @@ class Motor {
         
 
       speed -= SPEED_INC;
-      if (speed < MIN_SPEED)
+      if (speed < MIN_SPEED) {
         speed = MIN_SPEED;
+      }
+        
     }
 
 // ****************** SLOW_DOWN **********************
@@ -181,7 +203,8 @@ class US_Sensor {
 
 
 class Tank {
-  bool STDBY = false; // power consumption mode: TBD
+  
+
   public:
   Motor left_motor;
   Motor right_motor;
@@ -195,23 +218,35 @@ class Tank {
   US_Sensor r_sensor;
   US_Sensor l_sensor;
 
+  bool STDBY = false; // power consumption mode: TBD
+  bool motors_on = false;
 
   void tank_init_motors(int _l_int1_pin,int _l_int2_pin, int _l_pwm_pin,int _l_pwm_channel, int _r_int1_pin,int _r_int2_pin, int _r_pwm_pin, int _r_pwm_channel,int _stby_pin) {  
-    // the pwm_pin is for ESp8266/WEMOS style, pwm_channel is for ESP32 style
-    
-    
-    pinMode(_stby_pin, OUTPUT);
-    STDBY = false; // starting with stdby mode
-    digitalWrite(_stby_pin,HIGH);
+    // the pwm_pin is for ESp8266/WEMOS style, pwm_channel is for ESP32 style    
+    //pinMode(_stby_pin, OUTPUT);
+    set_motors_off();
+    //digitalWrite(_stby_pin,STDBY);
     left_motor.init(_l_int1_pin,_l_int2_pin,_l_pwm_pin,_l_pwm_channel);
     right_motor.init(_r_int1_pin,_r_int2_pin,_r_pwm_pin,_r_pwm_channel);
   }
 
+   void set_motors_on() {
+    motors_on = true;
+    STDBY = false; // starting with stdby mode
+    digitalWrite(STBY_pin,HIGH);
+  }
+
+  void set_motors_off() {
+    motors_on = false;
+    STDBY = true; // starting with stdby mode
+    digitalWrite(STBY_pin,LOW);
+  }
+
   void tank_init_servos(int _F_SERVO_PWM, int _B_SERVO_PWM, int _R_SERVO_PWM, int _L_SERVO_PWM) {
-    f_servo.attach(F_SERVO_PWM); // connect the servo with GPIO
-    b_servo.attach(B_SERVO_PWM); // connect the servo with GPIO
-    r_servo.attach(R_SERVO_PWM); // connect the servo with GPIO
-    l_servo.attach(L_SERVO_PWM); // connect the servo with GPIO
+    //f_servo.attach(F_SERVO_PWM); // connect the servo with GPIO
+    // b_servo.attach(B_SERVO_PWM); // connect the servo with GPIO
+    // r_servo.attach(R_SERVO_PWM); // connect the servo with GPIO
+    // l_servo.attach(L_SERVO_PWM); // connect the servo with GPIO
   }
 
   void tank_init_us_sensors() {
@@ -341,13 +376,13 @@ class Tank {
   
 
 void test_moves() {
-  int test_speed = 500;
+  int test_speed = 1000;
   int l_speed = 500;
   int r_speed = 500;
   int test_time = 1000;
   int stop_time = 500;
   
-  // test Foward
+  // test Forward
   Serial.println("in test_moves: Forward");
   Tank_forward(test_speed);
   delay(test_time);
@@ -379,7 +414,7 @@ void test_moves() {
   delay(stop_time);
 
   // test left pivot
-  Serial.println("in test_moves: LKeft Pivot");
+  Serial.println("in test_moves: Left Pivot");
   Tank_left_pivot(test_speed);
   delay(test_time);
   delay(stop_time);
@@ -390,7 +425,32 @@ void test_moves() {
 // basic HW test, to make sure pins don;t create issues
 // to delete when all works fine
 void test_hw() {
-int delay_time = 200;
+
+  set_motors_on();
+// test the duty cycle - TBD
+   Serial.print("In test_hw in TANK class. Testing duty_cycle:   ");
+   for (int speed=0;speed<255;speed+=30) {
+     Serial.print(speed);
+     Serial.print("...");
+     Tank_forward(speed);
+     delay(2000);
+   }
+
+
+   for (int speed=0;speed<255;speed+=30) {
+     Serial.print(speed);
+     Serial.print("...");
+     Tank_backward(speed);
+     delay(2000);
+   }
+
+
+
+   Serial.println("_____ end speed test");
+
+return;
+
+  int delay_time = 200;
 
    digitalWrite(LED_MOV_pin,HIGH);
    //digitalWrite(Spare_LED,HIGH);
@@ -428,6 +488,11 @@ int delay_time = 200;
    //analogWrite(PWMB_pin, 500);
    //Serial.println("11");
    //delay(delay_time);  
+
+   
+   
+
+
  
    digitalWrite(LED_MOV_pin,LOW);
    //digitalWrite(Spare_LED,LOW);
@@ -454,8 +519,15 @@ void test_servo(Servo _servo_name) {
   }
 
 
-void tank_test() {
+void  tank_test() {
+  Serial.println("set motors ON");
+  set_motors_on();
   test_hw();
+  Serial.println("set motors OFF");
+  set_motors_off();
+  delay(1000);
+  //test_moves();
+  return;
 
   Serial.println("testing Sensor: Front");
   test_sensor(f_sensor,5,200);
