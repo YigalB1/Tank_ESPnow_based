@@ -376,11 +376,12 @@ class Tank {
   
 
 void test_moves() {
-  int test_speed = 1000;
-  int l_speed = 500;
-  int r_speed = 500;
+  int test_speed = 100;
+  int l_speed = 100;
+  int r_speed = 100;
   int test_time = 1000;
   int stop_time = 500;
+  
   
   // test Forward
   Serial.println("in test_moves: Forward");
@@ -393,32 +394,39 @@ void test_moves() {
   Serial.println("in test_moves: Backward");
   Tank_backward(test_speed);
   delay(test_time);
+  tank_stop();
   delay(stop_time);
 
   // test Left turn
+  r_speed = 200;
   Serial.println("in test_moves: Left turn");
   Tank_forward_turn(l_speed,r_speed);
   delay(test_time);
+  tank_stop();
   delay(stop_time);
 
   // test Right turn
+  r_speed = 100;
+  l_speed = 200;
   Serial.println("in test_moves: Right turn");
   Tank_forward_turn(l_speed,r_speed);
   delay(test_time);
+  tank_stop();
   delay(stop_time);
 
   // test right pivot
   Serial.println("in test_moves: Right Pivot");
   Tank_right_pivot(test_speed);
   delay(test_time);
+  tank_stop();
   delay(stop_time);
 
   // test left pivot
   Serial.println("in test_moves: Left Pivot");
   Tank_left_pivot(test_speed);
   delay(test_time);
+  tank_stop();
   delay(stop_time);
-
 
 } // of test_moves
 
@@ -520,14 +528,14 @@ void test_servo(Servo _servo_name) {
 
 
 void  tank_test() {
-  Serial.println("set motors ON");
-  set_motors_on();
-  test_hw();
-  Serial.println("set motors OFF");
-  set_motors_off();
+  Serial.println("test tank moves: FW/BW/R/L/R pivot/L pivot");
+  my_tank.set_motors_on();
+  my_tank.test_moves();
+  my_tank.set_motors_off();
   delay(1000);
-  //test_moves();
+
   return;
+
 
   Serial.println("testing Sensor: Front");
   test_sensor(f_sensor,5,200);

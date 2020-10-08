@@ -79,7 +79,7 @@ void setup()
 
    my_tank.tank_init_motors(AIN1_pin,AIN2_pin,PWMA_pin, L_PWM_Channel, BIN1_pin,BIN2_pin,PWMB_pin, R_PWM_Channel, STBY_pin);
    //my_tank.tank_init_servos(F_SERVO_PWM,B_SERVO_PWM,R_SERVO_PWM,L_SERVO_PWM);
-   //my_tank.tank_init_us_sensors();
+   my_tank.tank_init_us_sensors();
 
    // my_tank.tank_test();
 
@@ -93,22 +93,14 @@ void setup()
  
 void loop() 
 {
-/*
-   // DEBUG
    my_tank.set_motors_on();
-   digitalWrite(STBY_pin,HIGH);
-   Serial.println("testing duty_cycle");
-   for (int speed=50;speed<255;speed+=20) {
-     Serial.print(speed);
-     Serial.print("...");
-     ledcWrite(L_PWM_Channel, speed);
-     ledcWrite(R_PWM_Channel, speed);
-     delay(500);
-   }   
-   Serial.println("_____ end speed test");
-*/
-   my_tank.test_hw();
+   my_tank.test_moves();
+   my_tank.set_motors_off();
+
+
    return;
+
+   
 
    
 
@@ -119,9 +111,6 @@ void loop()
    // ranging from -1023 to 0 to 1023
    // is this IF necessary? probably not
 
-   my_tank.tank_test();
-
-   //my_tank.test_moves();
 
 /*
       
