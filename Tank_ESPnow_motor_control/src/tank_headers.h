@@ -59,10 +59,12 @@ const int BACKARD = 0;
 // for DC motors
 // for Esp32 (DIFFERENT THAN ESPP8266/WEMOS)
 // setting PWM properties
-const int freq = 5000;
+const int MOTOR_FREQ = 5000;
+const int SERVO_FREQ = 50;
 const int L_PWM_Channel = 0;
 const int R_PWM_Channel = 1;
-const int resolution = 8; // 10 bit resulation: speed until 1023 . Maybe 8? 
+const int PWM_REOLUTION = 8; // 10 bit resulation: speed until 1023 . Maybe 8? 
+const int SERVO_RANGE = 255; // pow(2,PWM_REOLUTION); // 255 ; // because 8 bit 
 
 // for Servo motors
 const int F_SERVO_Channel = 2;

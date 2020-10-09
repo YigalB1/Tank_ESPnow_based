@@ -54,8 +54,8 @@ void setup()
    // for ESP32 - different than ESp8266/WEMOS
    // example from: https://randomnerdtutorials.com/esp32-pwm-arduino-ide/
    // configure LED PWM functionalitites
-  ledcSetup(L_PWM_Channel, freq, resolution);
-  ledcSetup(R_PWM_Channel, freq, resolution);
+  ledcSetup(L_PWM_Channel, MOTOR_FREQ, PWM_REOLUTION);
+  ledcSetup(R_PWM_Channel, MOTOR_FREQ, PWM_REOLUTION);
   
   // attach the channel to the GPIO to be controlled
   ledcAttachPin(PWMA_pin, L_PWM_Channel);
@@ -64,38 +64,48 @@ void setup()
 
 
 // for the servo motors
-   ledcSetup(F_SERVO_Channel, freq, resolution);
-   ledcSetup(B_SERVO_Channel, freq, resolution);
-   ledcSetup(R_SERVO_Channel, freq, resolution);
-   ledcSetup(L_SERVO_Channel, freq, resolution);
 
-   ledcAttachPin(F_SERVO_PWM_PIN, F_SERVO_Channel);
+ //  ledcSetup(F_SERVO_Channel, SERVO_FREQ, PWM_REOLUTION);
+/*   
+   ledcSetup(B_SERVO_Channel, freq, PWM_REOLUTION);
+   ledcSetup(R_SERVO_Channel, freq, PWM_REOLUTION);
+   ledcSetup(L_SERVO_Channel, freq, PWM_REOLUTION);
+*/
+
+ //  ledcAttachPin(F_SERVO_PWM_PIN, F_SERVO_Channel);
+/*   
    ledcAttachPin(B_SERVO_PWM_PIN, B_SERVO_Channel);
    ledcAttachPin(R_SERVO_PWM_PIN, R_SERVO_Channel);
    ledcAttachPin(L_SERVO_PWM_PIN, L_SERVO_Channel);
+*/
 
 
 
+  my_tank.tank_init_motors(AIN1_pin,AIN2_pin,PWMA_pin, L_PWM_Channel, BIN1_pin,BIN2_pin,PWMB_pin, R_PWM_Channel, STBY_pin);
+  my_tank.tank_init_servos(F_SERVO_PWM_PIN,B_SERVO_PWM_PIN,R_SERVO_PWM_PIN,L_SERVO_PWM_PIN);
+  my_tank.tank_init_us_sensors();
 
-   my_tank.tank_init_motors(AIN1_pin,AIN2_pin,PWMA_pin, L_PWM_Channel, BIN1_pin,BIN2_pin,PWMB_pin, R_PWM_Channel, STBY_pin);
-   //my_tank.tank_init_servos(F_SERVO_PWM,B_SERVO_PWM,R_SERVO_PWM,L_SERVO_PWM);
-   my_tank.tank_init_us_sensors();
-
-   // my_tank.tank_test();
-
-   //Servo f_servo;
-   //f_servo.attach(F_SERVO_PWM); // connect the servo with GPIO
-
-
-  //test_hw();
+   //my_tank.tank_test();
+  
 } // of SETUP
  
  
 void loop() 
 {
+
+   Serial.println("testing Servo: Front");
+   my_tank.test_servos();
+   return;  
+
+   my_tank.test_sensor(my_tank.f_sensor,5,200);  // params: num of readings, delay 
+   return;
+
    my_tank.set_motors_on();
    my_tank.test_moves();
    my_tank.set_motors_off();
+
+   Serial.println("testing Sensor: Front");
+   my_tank.test_sensor(my_tank.f_sensor,5,200);  // params: num of readings, delay 
 
 
    return;

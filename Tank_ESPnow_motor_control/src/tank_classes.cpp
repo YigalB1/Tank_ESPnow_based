@@ -1,6 +1,6 @@
 #include<tank_headers.h>
 #include "WiFi.h"
-#include <ESP32Servo.h>
+//#include <ESP32Servo.h>
 //#include <NewPing.h>
 //#include<ESP8266WiFi.h>
 
@@ -155,17 +155,34 @@ void slow_down() {
 };  // of Motor class
 
 
-/*
+
 // no need for this class? there is a servo class builtin
 class us_Servo {
+  public:
+  int s_channel = 77;
+  int s_pin = 777; 
+  int s_freq = 77777;
+  int s_resolution = 777777;
+  
 
-  int angle_f, angle_b,angle_r,angle_l;
-  void init() {
+  void init(int _channel, int _pin, int _freq, int _resolution) {
+    s_channel = _channel;
+    s_pin = _pin;
+    s_freq = _freq;
+    s_resolution = _resolution;
+
+    ledcSetup(s_channel, s_freq, s_resolution);
+    ledcAttachPin(s_pin, s_channel);
   }
 
+  void write_angle(int _value) {
+     ledcWrite(s_channel, _value);
+  }
+
+
   
-};
-*/
+}; // of class us_servo
+
 
 class US_Sensor {
   public:
@@ -208,15 +225,21 @@ class Tank {
   public:
   Motor left_motor;
   Motor right_motor;
-  Servo f_servo; //initialize a servo object
-  Servo b_servo; //initialize a servo object
-  Servo r_servo; //initialize a servo object
-  Servo l_servo; //initialize a servo object
+  //Servo f_servo; //initialize a servo object
+  //Servo b_servo; //initialize a servo object
+  //Servo r_servo; //initialize a servo object
+  //Servo l_servo; //initialize a servo object
   
   US_Sensor f_sensor;
   US_Sensor b_sensor;
   US_Sensor r_sensor;
   US_Sensor l_sensor;
+
+  us_Servo f_servo; 
+  us_Servo b_servo; 
+  us_Servo r_servo; 
+  us_Servo l_servo; 
+  
 
   bool STDBY = false; // power consumption mode: TBD
   bool motors_on = false;
@@ -243,6 +266,16 @@ class Tank {
   }
 
   void tank_init_servos(int _F_SERVO_PWM, int _B_SERVO_PWM, int _R_SERVO_PWM, int _L_SERVO_PWM) {
+    f_servo.init(F_SERVO_Channel,F_SERVO_PWM_PIN,SERVO_FREQ,PWM_REOLUTION);
+    b_servo.init(B_SERVO_Channel,B_SERVO_PWM_PIN,SERVO_FREQ,PWM_REOLUTION);
+    r_servo.init(R_SERVO_Channel,R_SERVO_PWM_PIN,SERVO_FREQ,PWM_REOLUTION);
+    l_servo.init(L_SERVO_Channel,L_SERVO_PWM_PIN,SERVO_FREQ,PWM_REOLUTION);
+
+
+    //ledcSetup(F_SERVO_Channel, freq, resolution);
+    //ledcAttachPin(F_SERVO_PWM_PIN, F_SERVO_Channel);
+    //ledcWrite(F_SERVO_Channel, 255);
+
     //f_servo.attach(F_SERVO_PWM); // connect the servo with GPIO
     // b_servo.attach(B_SERVO_PWM); // connect the servo with GPIO
     // r_servo.attach(R_SERVO_PWM); // connect the servo with GPIO
@@ -507,13 +540,48 @@ return;
 
 }
 
-void test_servo(Servo _servo_name) {
-  for(int angle = 0; angle < 180; angle += 10) {
-    _servo_name.write(angle);
-    delay(400);
+void test_servos() {
+  //test_servos();
+  Serial.print("testing Servo: Front: ");
+  test_servo(f_servo);
+  Serial.println("testing Servo: Back");
+  test_servo(b_servo);
+  Serial.println("testing Servo: Right");
+  test_servo(r_servo);
+  Serial.println("testing Servo: Left");
+  test_servo(l_servo);
+}
+
+void test_servo(us_Servo _servo_name) {
+  for(int i = 3; i <= 30; i += 2) {
+    //int val = map(i,0,255,8,25);
+
+
+       //ledcWrite(F_SERVO_Channel, val);
+       Serial.print(i);
+       Serial.print("___");
+
+
+    _servo_name.write_angle(i);
+    delay(1500);
+    _servo_name.write_angle(ZERO);
     }
-    _servo_name.write(ZERO);
-    delay(100); // move from 180 to 0 degrees with a negative angle of 5 for(angle = 180; angle>=1; angle-=5)
+    
+    
+    //_servo_name.write_angle(ZERO);
+    //delay(100); // move from 180 to 0 degrees with a negative angle of 5 for(angle = 180; angle>=1; angle-=5)
+  }
+
+
+  void test_sensors() {
+     Serial.println("testing Sensor: Front");
+  test_sensor(f_sensor,5,200);
+  Serial.println("testing Sensor: Back");
+  test_sensor(b_sensor,10,200);
+  Serial.println("testing Sensor: Right");
+  test_sensor(r_sensor,10,200);
+  Serial.println("testing Sensor: left");
+  test_sensor(l_sensor,10,200);
   }
 
   void test_sensor(US_Sensor _S_Sensor, int _num,int _delay) {
@@ -529,35 +597,17 @@ void test_servo(Servo _servo_name) {
 
 void  tank_test() {
   Serial.println("test tank moves: FW/BW/R/L/R pivot/L pivot");
-  my_tank.set_motors_on();
-  my_tank.test_moves();
-  my_tank.set_motors_off();
+  set_motors_on();
+  test_moves();
+  set_motors_off();
   delay(1000);
 
+  test_sensors();
+  test_servos();
   return;
 
 
-  Serial.println("testing Sensor: Front");
-  test_sensor(f_sensor,5,200);
-  Serial.println("testing Sensor: Back");
-  test_sensor(b_sensor,10,200);
-  Serial.println("testing Sensor: Right");
-  test_sensor(r_sensor,10,200);
-  Serial.println("testing Sensor: left");
-  test_sensor(l_sensor,10,200);
-  return;
-
-
-  //test_moves();
-  Serial.println("testing Servo: Front");
-  test_servo(f_servo);
-  Serial.println("testing Servo: Back");
-  test_servo(b_servo);
-  Serial.println("testing Servo: Right");
-  test_servo(r_servo);
-  Serial.println("testing Servo: Left");
-  test_servo(l_servo);
-
+  
 
 
 }
