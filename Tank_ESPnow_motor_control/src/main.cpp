@@ -29,6 +29,13 @@ void setup()
    Serial.print("");
    Serial.println("finish setup");
 
+
+   WiFi.mode(WIFI_MODE_STA);
+  Serial.println(WiFi.macAddress());
+  while (true) {
+     
+  }
+
    // pinMode(LED_BUILTIN, OUTPUT);  
    pinMode(AIN1_pin, OUTPUT);
    pinMode(AIN2_pin, OUTPUT);
@@ -92,6 +99,10 @@ void setup()
  
 void loop() 
 {
+   my_tank.set_motors_on();
+   my_tank.test_moves();
+   my_tank.set_motors_off();
+   return;
 
    Serial.println("testing Servo: Front");
    my_tank.test_servos();
@@ -100,9 +111,7 @@ void loop()
    my_tank.test_sensor(my_tank.f_sensor,5,200);  // params: num of readings, delay 
    return;
 
-   my_tank.set_motors_on();
-   my_tank.test_moves();
-   my_tank.set_motors_off();
+
 
    Serial.println("testing Sensor: Front");
    my_tank.test_sensor(my_tank.f_sensor,5,200);  // params: num of readings, delay 
