@@ -1,0 +1,1 @@
+PCB: make proper power connectors (instead of 2.54 distance of pins)
