@@ -297,11 +297,88 @@ class Tank {
     right_motor.stop();
   }
 
+  void tank_go_vector(int _x, int _y) {
+
+    Serial.print("in tank_go_vector: x/y ");
+    Serial.print(_x);
+    Serial.print("..");
+    Serial.print(_y);
+    
+    // go by vector recieved from jpystick;
+    
+    
+    int x_speed = abs(_x);
+
+    int y_speed = abs(_y);
+
+    x_speed = map(x_speed,0,10,0,255);
+    y_speed = map(y_speed,0,10,0,255);
+
+    Serial.print("   x_speed / y_speed: x/y ");
+    Serial.print(x_speed);
+    Serial.print("..");
+    Serial.println(y_speed);
+
+    if (_x==0 && _y==0) {
+      left_motor.stop();
+      right_motor.stop();
+      return;
+    }
+
+    if (_x==0 && _y>0) {
+      Tank_forward(y_speed);      
+      return;
+    }
+
+    if (_x==0 && _y<0) {
+      Tank_backward(abs(y_speed));
+      return;
+    }
+
+    if (_x>0 && _y==0) {
+      Tank_right_pivot(x_speed);
+      return;
+    }
+
+    if (_x<0 && _y==0) {
+      Tank_left_pivot(abs(x_speed));
+      return;
+    }
+
+  // now deal with vector moves
+    if (_x>0 && _y>0) {
+      // go FWD right
+      Tank_forward_turn(x_speed+y_speed,y_speed);
+      return;
+    }
+
+      if (_x<0 && _y>0) {
+      // go FWD left
+      Tank_forward_turn(y_speed,y_speed+x_speed);
+      return;
+    }
+
+        if (_x>0 && _y<0) {
+      // go FWD right
+      Tank_backward_turn(x_speed+y_speed,y_speed);
+      return;
+    }
+
+      if (_x<0 && _y<0) {
+      // go FWD left
+      Tank_backward_turn(y_speed,y_speed+x_speed);
+      return;
+    }
+
+
+  } // of tank_go_vector
+
 
   void Tank_forward(int _speed) {
     left_motor.Go_forward(_speed);
     right_motor.Go_forward(_speed);    
   }
+
 
   void Tank_backward(int _speed) {
       left_motor.Go_backward(_speed);
@@ -466,7 +543,13 @@ void test_moves() {
 // basic HW test, to make sure pins don;t create issues
 // to delete when all works fine
 void test_hw() {
-
+  for (int i=1;i<4;i++) {
+    digitalWrite(LED_MOV_pin,HIGH);
+    delay(500);  
+    digitalWrite(LED_MOV_pin,LOW);
+    delay(400);  
+  }
+  
   set_motors_on();
 // test the duty cycle - TBD
    Serial.print("In test_hw in TANK class. Testing duty_cycle:   ");

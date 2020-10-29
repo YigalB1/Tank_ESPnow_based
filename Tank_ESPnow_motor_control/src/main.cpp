@@ -3,16 +3,6 @@
 //#include<ESP8266WiFi.h>
 //#include <espnow.h>
 #include<tank_classes.cpp>
-//#include <SparkFun_TB6612.h>  //  library for the TB6612 with Motor class & functions
-
-//#include <ESP32Servo.h>
- 
-// Pins for all inputs, keep in mind the PWM defines must be on PWM pins
-// the default pins listed are the ones used on the Redbot (ROB-12097) with
-// the exception of STBY which the Redbot controls with a physical switch
-
-
-
 
 
 Tank my_tank;
@@ -21,7 +11,44 @@ Motor motor_right;
 int rc_x = 0;
 int rc_y = 0;
 
-//void test_hw();
+
+
+typedef struct struct_message {
+  int x_val;
+  int y_val;
+  bool button_state;
+  char ctrl_msg[32];
+  //float c;
+  //String d;
+} struct_message;
+
+// Create a struct_message called myData
+struct_message myData;
+
+// callback function that will be executed when data is received
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+  memcpy(&myData, incomingData, sizeof(myData));
+  Serial.print("   Bytes received: ");
+  Serial.print(len);
+  Serial.print("  ctrl_msg: ");
+  Serial.print(myData.ctrl_msg);
+  Serial.print("  button_state: ");
+  Serial.print(myData.button_state);
+  Serial.print("  x_val: ");
+  Serial.print(myData.x_val);
+  Serial.print("  y_val: ");
+  Serial.println(myData.y_val);
+
+  my_tank.tank_go_vector(myData.x_val,myData.y_val);
+
+
+
+}
+
+
+
+
+
  
 void setup()
 {
@@ -32,9 +59,23 @@ void setup()
 
    WiFi.mode(WIFI_MODE_STA);
   Serial.println(WiFi.macAddress());
-  while (true) {
-     
+  delay(1000);
+
+   // Set device as a Wi-Fi Station
+  WiFi.mode(WIFI_STA);
+
+  // Init ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
   }
+  
+  // Once ESPNow is successfully Init, we will register for recv CB to
+  // get recv packer info
+  esp_now_register_recv_cb(OnDataRecv);
+
+
+
 
    // pinMode(LED_BUILTIN, OUTPUT);  
    pinMode(AIN1_pin, OUTPUT);
@@ -69,23 +110,7 @@ void setup()
   ledcAttachPin(PWMB_pin, R_PWM_Channel);
 
 
-
-// for the servo motors
-
- //  ledcSetup(F_SERVO_Channel, SERVO_FREQ, PWM_REOLUTION);
-/*   
-   ledcSetup(B_SERVO_Channel, freq, PWM_REOLUTION);
-   ledcSetup(R_SERVO_Channel, freq, PWM_REOLUTION);
-   ledcSetup(L_SERVO_Channel, freq, PWM_REOLUTION);
-*/
-
- //  ledcAttachPin(F_SERVO_PWM_PIN, F_SERVO_Channel);
-/*   
-   ledcAttachPin(B_SERVO_PWM_PIN, B_SERVO_Channel);
-   ledcAttachPin(R_SERVO_PWM_PIN, R_SERVO_Channel);
-   ledcAttachPin(L_SERVO_PWM_PIN, L_SERVO_Channel);
-*/
-
+   my_tank.test_hw();  // 
 
 
   my_tank.tank_init_motors(AIN1_pin,AIN2_pin,PWMA_pin, L_PWM_Channel, BIN1_pin,BIN2_pin,PWMB_pin, R_PWM_Channel, STBY_pin);
@@ -99,6 +124,7 @@ void setup()
  
 void loop() 
 {
+  
    my_tank.set_motors_on();
    my_tank.test_moves();
    my_tank.set_motors_off();

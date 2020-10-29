@@ -6,6 +6,10 @@
 		{
 			"name": "Tank_ESPnow_remote_control",
 			"path": "Tank_ESPnow_remote_control"
+		},
+		{
+			"name": "ESP32_MOUSE",
+			"path": "..\\ESP32_MOUSE"
 		}
 	],
 	"settings": {
