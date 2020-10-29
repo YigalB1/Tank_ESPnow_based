@@ -12,7 +12,8 @@ class joystic {
   int Yval = 0;
   int prev_x ; // keep previous joystic state, transmit only changes
   int prev_y ;
-  bool Push_button_state = false;
+  bool prev_butt;
+  //bool Push_button_state = false;
   bool ON_state = false ;
   bool change_occured; // is this read different than previous?
   int Xpin,Ypin,PushButtpin; // the hardwrae pins of the ESP32
@@ -72,6 +73,13 @@ class joystic {
     }
     */ 
 
+   Serial.println("  ");
+   Serial.print("t_rdX: ");
+   Serial.print(t_rdX);
+   Serial.print("  t_rdY: ");
+   Serial.print(t_rdY);
+   Serial.print("  Button: ");
+   Serial.print(butt_pressed);
 
 
     Xval = 0;    
@@ -85,10 +93,22 @@ class joystic {
       Yval = map(t_rdY,0,y_min_zero,-mouse_mov_range,0); }
       else if (t_rdY > y_max_zero ) {
         Yval = map(t_rdY,y_max_zero,4095,0,mouse_mov_range); }
+
+
+
+  
+   Serial.print("        Xval: ");
+   Serial.print(Xval);
+   Serial.print("  Yval: ");
+   Serial.print(Yval);
+   Serial.print("  Button: ");
+   Serial.print(butt_pressed);
+   
+
     
-    if ((Xval != prev_x) || (Yval != prev_y)) {
+    if ((Xval != prev_x) || (Yval != prev_y) || (butt_pressed)) {
       change_occured = true;
-      Serial.print("  ------    in class, read_jostick    ");
+      Serial.print("  ------   change occured ...... in class, read_jostick    ");
       //print_it();
     }      
     else
