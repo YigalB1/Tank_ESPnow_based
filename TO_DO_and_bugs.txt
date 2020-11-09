@@ -1,0 +1,2 @@
+RC PCB: add connector for external power connect - such as battery. 
+RC schematics & layout: add pullup 10K from D34 (switch button input from Joystick) to pin 32 (3.3V), because the joystick has no built in pullup.
