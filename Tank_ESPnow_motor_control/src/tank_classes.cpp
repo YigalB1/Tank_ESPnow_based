@@ -299,15 +299,17 @@ class Tank {
 
   void tank_go_vector(int _x, int _y,int _button,int _range) {
 
-    Serial.print("        in tank_go_vector: x/y/button ");
+    Serial.print("  >> in tank_go_vector: x/y/button/range ");
     Serial.print(_x);
     Serial.print("..  ");
     Serial.print(_y);
     Serial.print("..  ");
     Serial.print(_button);
     Serial.print("..  ");
+    Serial.print(_range);
+    Serial.print("..  ");
     
-    // go by vector recieved from jpystick;
+    // go by vector recieved from joystick;
     
     
     int x_speed = abs(_x);
@@ -336,7 +338,7 @@ class Tank {
 
     if (_x==0 && _y<0) {
       Serial.println("  backward");
-      Tank_backward(abs(y_speed));
+      Tank_backward(y_speed);
       return;
     }
 
@@ -348,36 +350,65 @@ class Tank {
 
     if (_x<0 && _y==0) {
       Serial.println("  Left Pivot");
-      Tank_left_pivot(abs(x_speed));
+      Tank_left_pivot(x_speed);
       return;
     }
 
   // now deal with vector moves
     if (_x>0 && _y>0) {
-      Serial.println("  FWD R");
+      // FWD R
+      int r_speed = map(x_speed,0,255,y_speed,0);  
+
+      Serial.print("  FWD R ");
+      Serial.print(x_speed);
+      Serial.print(" , ");
+      Serial.print(y_speed);
+      Serial.println(" ");
+      
       // go FWD right
-      Tank_forward_turn(x_speed+y_speed,y_speed);
+      Tank_forward_turn(y_speed,r_speed);
       return;
     }
 
       if (_x<0 && _y>0) {
-        Serial.println("  FWD L");
+        // FWD L
+        int l_speed = map(x_speed,0,255,y_speed,0);  
+        Serial.print("  FWD L ");
+        Serial.print(x_speed);
+        Serial.print(" , ");
+        Serial.print(y_speed);
+        Serial.print(" , r_speed: ");
+        Serial.print(l_speed);
+        Serial.println(" ");
       // go FWD left
-      Tank_forward_turn(y_speed,y_speed+x_speed);
+      
+      Tank_forward_turn(y_speed,l_speed);
       return;
     }
 
-        if (_x>0 && _y<0) {
-          Serial.println("  BWD R");
+    if (_x>0 && _y<0) {
+      // BWD R
+      int r_speed = map(x_speed,0,255,y_speed,0);  
+      Serial.println("  BWD R ");      
+      Serial.print(x_speed);
+      Serial.print(" , ");
+      Serial.print(y_speed);
+      Serial.println(" ");
       // go BWD right
-      Tank_backward_turn(x_speed+y_speed,y_speed);
+      Tank_backward_turn(y_speed,r_speed);
       return;
     }
 
-      if (_x<0 && _y<0) {
-        Serial.println("  BWD L");
+    if (_x<0 && _y<0) {
+      // BWD L
+      int l_speed = map(x_speed,0,255,y_speed,0); 
+      Serial.print("  BWD L ");
+      Serial.print(x_speed);
+      Serial.print(" , ");
+      Serial.print(y_speed);
+      Serial.println(" ");
       // go BWD left
-      Tank_backward_turn(y_speed,y_speed+x_speed);
+      Tank_backward_turn(l_speed,y_speed);
       return;
     }
 
@@ -561,114 +592,45 @@ void test_hw() {
     digitalWrite(LED_MOV_pin,LOW);
     delay(400);  
   } // of test_hw()
+
+  test_servos();
+  test_moves();
   
-return;
-
-
-  set_motors_on();
-// test the duty cycle - TBD
-   Serial.print("In test_hw in TANK class. Testing duty_cycle:   ");
-   for (int speed=0;speed<255;speed+=30) {
-     Serial.print(speed);
-     Serial.print("...");
-     Tank_forward(speed);
-     delay(2000);
-   } // of 
-
-
-   for (int speed=0;speed<255;speed+=30) {
-     Serial.print(speed);
-     Serial.print("...");
-     Tank_backward(speed);
-     delay(2000);
-   }
 
 
 
-   Serial.println("_____ end speed test");
 
-return;
-
-  int delay_time = 200;
-
-   digitalWrite(LED_MOV_pin,HIGH);
-   //digitalWrite(Spare_LED,HIGH);
-   delay(1000);   
-   Serial.print("1.");
-   digitalWrite(AIN1_pin,HIGH);
-   delay(delay_time);
-   Serial.print("2.");
-   digitalWrite(AIN1_pin,LOW);
-   delay(delay_time);
-   Serial.print("3.");
-   digitalWrite(AIN2_pin,HIGH);
-   delay(delay_time);
-   Serial.print("4.");
-   digitalWrite(AIN2_pin,LOW);
-   delay(delay_time);
-   Serial.print("5.");
-   digitalWrite(BIN1_pin,HIGH);
-   delay(delay_time);
-   Serial.print("6.");
-   digitalWrite(BIN1_pin,LOW);
-   delay(delay_time);
-   Serial.print("7.");
-   digitalWrite(BIN2_pin,HIGH);
-   delay(delay_time);
-   Serial.print("8.");  
-   digitalWrite(BIN2_pin,LOW);
-   delay(delay_time);
-   Serial.print("9.");
-   //analogWrite(PWMA_pin, 500);
-   //Serial.print("10.");
-   //delay(delay_time);
-   Serial.println("......");
-   delay(delay_time);
-   //analogWrite(PWMB_pin, 500);
-   //Serial.println("11");
-   //delay(delay_time);  
-
-   
-   
-
-
- 
-   digitalWrite(LED_MOV_pin,LOW);
-   //digitalWrite(Spare_LED,LOW);
-
-}
+} // of test_hw()
 
 void test_servos() {
   //test_servos();
   Serial.print("testing Servo: Front: ");
+  return;
   test_servo(f_servo);
+  return;
   Serial.println("testing Servo: Back");
   test_servo(b_servo);
   Serial.println("testing Servo: Right");
   test_servo(r_servo);
   Serial.println("testing Servo: Left");
   test_servo(l_servo);
-}
+} // of test_servos()
 
 void test_servo(us_Servo _servo_name) {
   for(int i = 3; i <= 30; i += 2) {
-    //int val = map(i,0,255,8,25);
-
-
-       //ledcWrite(F_SERVO_Channel, val);
-       Serial.print(i);
-       Serial.print("___");
-
-
+    Serial.print(i);
+    Serial.print("___");
     _servo_name.write_angle(i);
-    delay(1500);
+    delay(500);
     _servo_name.write_angle(ZERO);
-    }
+    delay(500);
+    _servo_name.write_angle(15);
+  } // of for loop
     
     
     //_servo_name.write_angle(ZERO);
     //delay(100); // move from 180 to 0 degrees with a negative angle of 5 for(angle = 180; angle>=1; angle-=5)
-  }
+} // of test_servo()
 
 
   void test_sensors() {
@@ -680,7 +642,7 @@ void test_servo(us_Servo _servo_name) {
   test_sensor(r_sensor,10,200);
   Serial.println("testing Sensor: left");
   test_sensor(l_sensor,10,200);
-  }
+  } // of test_sensors()
 
   void test_sensor(US_Sensor _S_Sensor, int _num,int _delay) {
     for (int i=1;i<=_num;i++) {
@@ -690,29 +652,20 @@ void test_servo(us_Servo _servo_name) {
       delay(_delay);
     }
     
-  }
+  } // of test_sensor()
 
 
-void  tank_test() {
-  Serial.println("test tank moves: FW/BW/R/L/R pivot/L pivot");
-  set_motors_on();
-  test_moves();
-  set_motors_off();
-  delay(1000);
+  void  tank_test() {
+    Serial.println("test tank moves: FW/BW/R/L/R pivot/L pivot");
+    set_motors_on();
+    test_moves();
+    set_motors_off();
+    delay(1000);
 
-  test_sensors();
-  test_servos();
-  return;
-
-
-  
-
-
-}
-
-
-
-
+    test_sensors();
+    test_servos();
+    return;
+  } // of tank_test()
 
 
 }; // of TANK class

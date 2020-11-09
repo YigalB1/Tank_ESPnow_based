@@ -14,6 +14,7 @@
 #define STBY_pin     27 // D5 , when low, all stop, low current consumption
 #define LED_MOV_pin  15 // D4 , when the tank is moving, on board LED
 //#define Spare_LED    15 // D8, currently not in use
+#define BUZZER_pin  19 
 
 #define F_TRIG_PIN  32
 #define F_ECHO_PIN  35

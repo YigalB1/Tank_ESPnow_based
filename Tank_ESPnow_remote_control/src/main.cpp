@@ -15,7 +15,8 @@ int mouse_range = 12; // the max of the mouse change
 
 // REPLACE WITH YOUR RECEIVER MAC Address
 //uint8_t broadcastAddress[] = {0x24,0x0A,0xC4,0x59,0x41, 0x70};
-uint8_t broadcastAddress[] = {0x10,0x52,0x1c,0x66,0xc4, 0x4c}; // pcb tank
+//uint8_t broadcastAddress[] = {0x10,0x52,0x1c,0x66,0xc4, 0x4c}; // pcb tank
+uint8_t broadcastAddress[] = {0x24,0x0A,0xC4,0x59,0x41, 0x70}; // pcb 2
 
 // Structure to send data, must match the receiver structure
 typedef struct struct_message {
@@ -49,7 +50,7 @@ void IRAM_ATTR Butt_pressed_isr() {
 // *************** SETUP ****************************
 void setup() {
   Serial.begin(9600);
-  delay(1000);
+  //delay(1000);
   // pinMode(PushButton, INPUT_PULLUP); // GPIO as input
 
   pinMode(PushButton_PIN, INPUT); // GPIO as input // Problem - not a good GPIO, no pullup. 
@@ -134,7 +135,7 @@ void loop() {
 
     tank_joystick.butt_pressed = false;
 
-    delay(500);
+    delay(100);
 
     return;
 

@@ -29,45 +29,20 @@ struct_message myData;
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&myData, incomingData, sizeof(myData));
-
-  
-  //Serial.print("   Bytes received: ");
-  //Serial.print(len);
-  //Serial.print("  ctrl_msg: ");
-  //Serial.print(myData.ctrl_msg);
-  //Serial.print("  x_val: ");
-  //Serial.print(myData.x_val);
-  //Serial.print("   ");
-  //Serial.print("  y_val: ");
-  //Serial.print(myData.y_val);
-  //Serial.print("   ");
-  //Serial.print("  button_state: ");
-  //Serial.print(myData.button_state);
-
-
   my_tank.tank_go_vector(myData.x_val,myData.y_val,myData.button_state,range);
-
-
-
 }
 
-
-
-
-
- 
+// ****************** SETUP ************* 
 void setup()
 {
-   Serial.begin(9600);
-   Serial.print("");
-   Serial.println("finish setup");
-
-
-   WiFi.mode(WIFI_MODE_STA);
+  Serial.begin(9600);
+  Serial.print("");
+  Serial.println("Starting setup");
+   
+  WiFi.mode(WIFI_MODE_STA);
   Serial.println(WiFi.macAddress());
-  delay(1000);
 
-   // Set device as a Wi-Fi Station
+  // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
 
   // Init ESP-NOW
@@ -80,9 +55,6 @@ void setup()
   // Once ESPNow is successfully Init, we will register for recv CB to
   // get recv packer info
   esp_now_register_recv_cb(OnDataRecv);
-
-
-
 
    // pinMode(LED_BUILTIN, OUTPUT);  
    pinMode(AIN1_pin, OUTPUT);
@@ -104,6 +76,8 @@ void setup()
    
    pinMode(STBY_pin, OUTPUT);
    pinMode(LED_MOV_pin, OUTPUT);
+   pinMode(BUZZER_pin, OUTPUT);
+   
 
 // For the tank DC motors
    // for ESP32 - different than ESp8266/WEMOS
@@ -115,96 +89,40 @@ void setup()
   // attach the channel to the GPIO to be controlled
   ledcAttachPin(PWMA_pin, L_PWM_Channel);
   ledcAttachPin(PWMB_pin, R_PWM_Channel);
-
-
-   my_tank.test_hw();  // 
-
-
+ 
   my_tank.tank_init_motors(AIN1_pin,AIN2_pin,PWMA_pin, L_PWM_Channel, BIN1_pin,BIN2_pin,PWMB_pin, R_PWM_Channel, STBY_pin);
-  //my_tank.tank_init_servos(F_SERVO_PWM_PIN,B_SERVO_PWM_PIN,R_SERVO_PWM_PIN,L_SERVO_PWM_PIN);
+  my_tank.tank_init_servos(F_SERVO_PWM_PIN,B_SERVO_PWM_PIN,R_SERVO_PWM_PIN,L_SERVO_PWM_PIN);
+
+
+  
+  digitalWrite(BUZZER_pin,HIGH); // we are ready to go !
+  delay(1000);
+  digitalWrite(BUZZER_pin,LOW); // we are ready to go !
+  my_tank.test_hw();  // 
+
   //my_tank.tank_init_us_sensors();
 
    //my_tank.tank_test();
+   
+   // my_tank.test_sensor(my_tank.f_sensor,5,200);  // params: num of readings, delay 
+  //    Serial.println("testing Sensor: Front");
+//   my_tank.test_sensor(my_tank.f_sensor,5,200);  // params: num of readings, delay 
+
+//   my_tank.set_motors_on();
+//   my_tank.test_moves();
+//   my_tank.set_motors_off();
+
+   digitalWrite(LED_MOV_pin,HIGH); // we are ready to go !
+   my_tank.set_motors_on();
    Serial.println("End of setup");
+ 
   
 } // of SETUP
- 
- 
+
+// ***************** LOOP ************
 void loop() 
 {
-  my_tank.set_motors_on();
-  return;
-
-   my_tank.set_motors_on();
-   my_tank.test_moves();
-   my_tank.set_motors_off();
-   return;
-
-   Serial.println("testing Servo: Front");
-   my_tank.test_servos();
-   return;  
-
-   my_tank.test_sensor(my_tank.f_sensor,5,200);  // params: num of readings, delay 
-   return;
-
-
-
-   Serial.println("testing Sensor: Front");
-   my_tank.test_sensor(my_tank.f_sensor,5,200);  // params: num of readings, delay 
-
-
-   return;
-
-   
-
-   
-
-
-
-
-   // rc_x,rc_y are the readings from the joystick in the remote control
-   // ranging from -1023 to 0 to 1023
-   // is this IF necessary? probably not
-
-
-/*
-      
-   for (int i=0;i<1023;i+=300) {
-      Serial.print(i);
-      Serial.print("..");
-      Serial.print(rc_x);
-      Serial.print("..");
-      Serial.print(rc_y);
-      Serial.println("");
-      
-      rc_x = i;
-      rc_y = i;
-      Serial.print(i);
-      Serial.print("..");
-      Serial.print(rc_x);
-      Serial.print("..");
-      Serial.print(rc_y);
-      Serial.println("");
-
-
-
-      my_tank.tank_move(rc_x,rc_y);
-      delay(2000);
-   }
-   
-   for (int i=-1023;i<0;i+=300) {
-      Serial.println(i);
-      Serial.println("..");
-      rc_x = i;
-      rc_y = i;
-      my_tank.tank_move(rc_x,rc_y);
-      delay(2000);
-   }
-
-   */
-
-
-
+     
 } // of LOOP
 
 
