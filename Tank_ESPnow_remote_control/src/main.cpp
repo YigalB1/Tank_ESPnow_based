@@ -104,6 +104,8 @@ void loop() {
 // test_joystick(); // just for testing
 
   tank_joystick.read_jostick();
+  if (!tank_joystick.change_occured)
+    return;
   // transmit because joystick reading has been changed
     // sens the data to the tank
     strcpy(myData.ctrl_msg, "I am the joystic");

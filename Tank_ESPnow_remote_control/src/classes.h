@@ -97,14 +97,14 @@ class joystic {
 
 
 
-  
+  /*
    Serial.print("        Xval: ");
    Serial.print(Xval);
    Serial.print("  Yval: ");
    Serial.print(Yval);
    Serial.print("  Button: ");
    Serial.print(butt_pressed);
-   
+  */ 
 
     
     if ((Xval != prev_x) || (Yval != prev_y) || (butt_pressed)) {

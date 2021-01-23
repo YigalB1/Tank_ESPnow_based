@@ -28,7 +28,7 @@ struct_message myData;
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   memcpy(&myData, incomingData, sizeof(myData));
   my_tank.tank_go_vector(myData.x_val,myData.y_val,myData.button_state,range);
-}
+} // of OnDataRecv() 
 
 // ****************** SETUP ************* 
 void setup()
@@ -127,86 +127,7 @@ int test_speed = 100;
 
 void loop() 
 {
-
-/*
- digitalWrite(AIN2_pin,HIGH);
- digitalWrite(BIN2_pin,LOW );
- delay(5);
- digitalWrite(AIN2_pin,LOW );
- digitalWrite(BIN2_pin,HIGH);
- delay(5);
- return;
-
-*/
-
-//int test_speed = 100;
-
-int test_time = 1000;
-int stop_time = 500;
-my_tank.set_motors_on();
-for (int t_speed=0;t_speed<=255;t_speed+=20) 
-{
-  Serial.print("   ");
-  Serial.print(t_speed);
-  my_tank.Tank_forward(t_speed);
-  delay(2000);
-  //my_tank.Tank_backward(t_speed);
-  //delay(1000);
-
-} // debug
-
-return;
-
-
-
-
-delay(1000);
-return;
-
-
-
-
-  Serial.println("in main: Forward. Speed is: ");
-
-  for (int i =0;i<300;i+=40) {
-    my_tank.set_motors_on();
-    Serial.print(i);
-    Serial.print("...");
-    my_tank.Tank_forward(test_speed);
-    delay(1000);
-    //my_tank.tank_stop();
-    //delay(stop_time);
-   
-  }
-    my_tank.tank_stop();
-   my_tank.set_motors_off();
-    delay(100);
-
-  return;
-
-  // test Backward
-  Serial.println("in main: Backward");
-  my_tank.Tank_backward(test_speed);
-  delay(test_time);
-  my_tank.tank_stop();
-  delay(stop_time);
-
-return;
-
-
-  // for testing only
-  digitalWrite(LED_MOV_pin,LOW);
-  my_tank.set_motors_on();
-  my_tank.left_motor.Go_forward(70);
-  my_tank.right_motor.Go_forward(70);
-  delay(2000);
-
-  digitalWrite(LED_MOV_pin,HIGH);
-  my_tank.set_motors_off();
-  my_tank.tank_stop();
-  delay(1000);
-
-     
+     delay(100);
 } // of LOOP
 
 
