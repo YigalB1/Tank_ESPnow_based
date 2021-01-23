@@ -16,7 +16,8 @@ int mouse_range = 12; // the max of the mouse change
 // REPLACE WITH YOUR RECEIVER MAC Address
 //uint8_t broadcastAddress[] = {0x24,0x0A,0xC4,0x59,0x41, 0x70};
 //uint8_t broadcastAddress[] = {0x10,0x52,0x1c,0x66,0xc4, 0x4c}; // pcb tank
-uint8_t broadcastAddress[] = {0x24,0x0A,0xC4,0x59,0x41, 0x70}; // pcb 2
+//uint8_t broadcastAddress[] = {0x24,0x0A,0xC4,0x59,0x41, 0x70}; // pcb 2
+uint8_t broadcastAddress[] = {0x7C,0x9E,0xBD,0xF8,0xCE, 0x9C}; // tank pcb 3
 
 // Structure to send data, must match the receiver structure
 typedef struct struct_message {
@@ -61,7 +62,6 @@ void setup() {
 
   test_hw();
 
-
   attachInterrupt(PushButton_PIN, Butt_pressed_isr, FALLING);
 
   // init ESPnow 
@@ -89,8 +89,6 @@ void setup() {
     Serial.println("Failed to add peer");
     return;
   }
-
-
 
   // Before start, get X & Y values to be considered as zero,
   // due to non exact readings
@@ -139,18 +137,12 @@ void loop() {
 
     return;
 
-
-
-
-
   // print_it();
 
   //if ((tank_joystick.Xval!=tank_joystick.prev_x) || (tank_joystick.Yval!=tank_joystick.prev_y)) {
   if (tank_joystick.change_occured) {
     Serial.print(" in loop, change occured ------>    ");
-    print_it();
-
-
+    //print_it();
 
     // transmit because joystick reading has been changed
     // sens the data to the tank
@@ -158,14 +150,13 @@ void loop() {
     myData.x_val = tank_joystick.Xval;
     myData.y_val = tank_joystick.Yval;
     myData.button_state = tank_joystick.butt_pressed;
-
       
     // Send message via ESP-NOW, only if x & y are both not zero
     esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
     
     if (result == ESP_OK) {
       Serial.println("");
-      Serial.println("Sent with success   ");
+      Serial.println("Sent OK  ");
     }
     else {
       Serial.println("");
@@ -173,17 +164,13 @@ void loop() {
     }
   } // of long if
 
-
   //delay(300);
   unsigned long time_now = 0;
   int period = 0;
   time_now = millis();      
   while(millis() < time_now + period){
         //wait approx. [period] ms
-  }
-  
-
-
+  } // of while loop
 } // of loop
 
 
@@ -259,7 +246,5 @@ void test_hw() {
     digitalWrite(LED2,LOW);
     delay(400);
   }
-  digitalWrite(LED3,LOW);
-  
-
-}
+  digitalWrite(LED3,LOW);  
+} // end of test_hw()

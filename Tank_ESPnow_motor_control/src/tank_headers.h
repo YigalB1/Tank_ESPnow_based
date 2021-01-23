@@ -31,12 +31,6 @@
 #define L_SERVO_PWM_PIN 17
 
 
-
-
-
-
-
-
 const int trig1 = 32;
 
 const int JUNK_VAL = 7777;

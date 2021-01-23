@@ -5,7 +5,6 @@
 //#include<ESP8266WiFi.h>
 
 
-
 class Motor {
   public:
   int motor_en1;
@@ -15,9 +14,7 @@ class Motor {
   int speed = 0; // in work, to use as the speed of the train instead of global variable
   int direction = FORWARD;
   int distance = 0;
- 
-  
-  
+   
   
   void init(int _in1, int _in2, int _pwm, int _pwm_channel) {
     // _pwm for ESp8266 style
@@ -241,7 +238,7 @@ class Tank {
   us_Servo l_servo; 
   
 
-  bool STDBY = false; // power consumption mode: TBD
+  bool STDBY = false; // power consumption mode. False: not in STBY mode (out signal is HIGH)
   bool motors_on = false;
 
   void tank_init_motors(int _l_int1_pin,int _l_int2_pin, int _l_pwm_pin,int _l_pwm_channel, int _r_int1_pin,int _r_int2_pin, int _r_pwm_pin, int _r_pwm_channel,int _stby_pin) {  
@@ -315,8 +312,8 @@ class Tank {
     int x_speed = abs(_x);
     int y_speed = abs(_y);
 
-    x_speed = map(x_speed,0,_range,0,255);
-    y_speed = map(y_speed,0,_range,0,255);
+    x_speed = map(x_speed,0,_range,0,SERVO_RANGE); // 255 for 8 bits
+    y_speed = map(y_speed,0,_range,0,SERVO_RANGE);
 
     Serial.print("   x_speed / y_speed: x/y ");
     Serial.print(x_speed);
@@ -357,7 +354,7 @@ class Tank {
   // now deal with vector moves
     if (_x>0 && _y>0) {
       // FWD R
-      int r_speed = map(x_speed,0,255,y_speed,0);  
+      int r_speed = map(x_speed,0,SERVO_RANGE,y_speed,0);  
 
       Serial.print("  FWD R ");
       Serial.print(x_speed);
@@ -372,7 +369,7 @@ class Tank {
 
       if (_x<0 && _y>0) {
         // FWD L
-        int l_speed = map(x_speed,0,255,y_speed,0);  
+        int l_speed = map(x_speed,0,SERVO_RANGE,y_speed,0);  
         Serial.print("  FWD L ");
         Serial.print(x_speed);
         Serial.print(" , ");
@@ -388,7 +385,7 @@ class Tank {
 
     if (_x>0 && _y<0) {
       // BWD R
-      int r_speed = map(x_speed,0,255,y_speed,0);  
+      int r_speed = map(x_speed,0,SERVO_RANGE,y_speed,0);  
       Serial.println("  BWD R ");      
       Serial.print(x_speed);
       Serial.print(" , ");
@@ -401,7 +398,7 @@ class Tank {
 
     if (_x<0 && _y<0) {
       // BWD L
-      int l_speed = map(x_speed,0,255,y_speed,0); 
+      int l_speed = map(x_speed,0,SERVO_RANGE,y_speed,0); 
       Serial.print("  BWD L ");
       Serial.print(x_speed);
       Serial.print(" , ");

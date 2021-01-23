@@ -73,6 +73,7 @@ class joystic {
     }
     */ 
 
+/*
    Serial.println("  ");
    Serial.print("t_rdX: ");
    Serial.print(t_rdX);
@@ -80,7 +81,7 @@ class joystic {
    Serial.print(t_rdY);
    Serial.print("  Button: ");
    Serial.print(butt_pressed);
-
+*/
 
     Xval = 0;    
     if (t_rdX < x_min_zero ) {

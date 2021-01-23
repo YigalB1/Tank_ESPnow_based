@@ -1,7 +1,5 @@
 #include "WiFi.h"
 #include <esp_now.h>
-//#include<ESP8266WiFi.h>
-//#include <espnow.h>
 #include<tank_classes.cpp>
 
 
@@ -37,7 +35,7 @@ void setup()
 {
   Serial.begin(9600);
   Serial.print("");
-  Serial.println("Starting setup");
+  Serial.println("in SETUP: Starting");
    
   WiFi.mode(WIFI_MODE_STA);
   Serial.println(WiFi.macAddress());
@@ -47,10 +45,10 @@ void setup()
 
   // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
-    Serial.println("Error initializing ESP-NOW");
+    Serial.println("in SETUP: Error initializing ESP-NOW");
     return;
   }
-  Serial.println("init ESP-NOW ok");
+  Serial.println("in SETUP: init ESP-NOW ok");
   
   // Once ESPNow is successfully Init, we will register for recv CB to
   // get recv packer info
@@ -91,14 +89,18 @@ void setup()
   ledcAttachPin(PWMB_pin, R_PWM_Channel);
  
   my_tank.tank_init_motors(AIN1_pin,AIN2_pin,PWMA_pin, L_PWM_Channel, BIN1_pin,BIN2_pin,PWMB_pin, R_PWM_Channel, STBY_pin);
+  Serial.println("in SETUP: init motors done");
   my_tank.tank_init_servos(F_SERVO_PWM_PIN,B_SERVO_PWM_PIN,R_SERVO_PWM_PIN,L_SERVO_PWM_PIN);
-
+  Serial.println("in SETUP: init servos done");
 
   
   digitalWrite(BUZZER_pin,HIGH); // we are ready to go !
   delay(1000);
   digitalWrite(BUZZER_pin,LOW); // we are ready to go !
-  my_tank.test_hw();  // 
+  Serial.println("in SETUP: starting test_hw()");
+
+ // my_tank.test_hw();  // 
+  Serial.println("in SETUP: finished test_hw()");
 
   //my_tank.tank_init_us_sensors();
 
@@ -120,8 +122,90 @@ void setup()
 } // of SETUP
 
 // ***************** LOOP ************
+
+int test_speed = 100;
+
 void loop() 
 {
+
+/*
+ digitalWrite(AIN2_pin,HIGH);
+ digitalWrite(BIN2_pin,LOW );
+ delay(5);
+ digitalWrite(AIN2_pin,LOW );
+ digitalWrite(BIN2_pin,HIGH);
+ delay(5);
+ return;
+
+*/
+
+//int test_speed = 100;
+
+int test_time = 1000;
+int stop_time = 500;
+my_tank.set_motors_on();
+for (int t_speed=0;t_speed<=255;t_speed+=20) 
+{
+  Serial.print("   ");
+  Serial.print(t_speed);
+  my_tank.Tank_forward(t_speed);
+  delay(2000);
+  //my_tank.Tank_backward(t_speed);
+  //delay(1000);
+
+} // debug
+
+return;
+
+
+
+
+delay(1000);
+return;
+
+
+
+
+  Serial.println("in main: Forward. Speed is: ");
+
+  for (int i =0;i<300;i+=40) {
+    my_tank.set_motors_on();
+    Serial.print(i);
+    Serial.print("...");
+    my_tank.Tank_forward(test_speed);
+    delay(1000);
+    //my_tank.tank_stop();
+    //delay(stop_time);
+   
+  }
+    my_tank.tank_stop();
+   my_tank.set_motors_off();
+    delay(100);
+
+  return;
+
+  // test Backward
+  Serial.println("in main: Backward");
+  my_tank.Tank_backward(test_speed);
+  delay(test_time);
+  my_tank.tank_stop();
+  delay(stop_time);
+
+return;
+
+
+  // for testing only
+  digitalWrite(LED_MOV_pin,LOW);
+  my_tank.set_motors_on();
+  my_tank.left_motor.Go_forward(70);
+  my_tank.right_motor.Go_forward(70);
+  delay(2000);
+
+  digitalWrite(LED_MOV_pin,HIGH);
+  my_tank.set_motors_off();
+  my_tank.tank_stop();
+  delay(1000);
+
      
 } // of LOOP
 
