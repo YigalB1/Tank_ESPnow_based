@@ -97,6 +97,7 @@ void setup() {
   tank_joystick.estimate_joystic_zeros();
 } // of SETUP
 
+bool first_zero = true;
 
 
 void loop() {
@@ -104,10 +105,46 @@ void loop() {
 // test_joystick(); // just for testing
 
   tank_joystick.read_jostick();
-  if (!tank_joystick.change_occured)
-    return;
-  // transmit because joystick reading has been changed
-    // sens the data to the tank
+  // submitting all non-zero readings
+  // in case of zero reading - submit the 1st one only (to stop the tank)
+
+
+
+    //Serial.print(">>  ");
+    //Serial.print(" non_zero_cycle: ");
+    //Serial.println(tank_joystick.non_zero_cycle);
+    //return;
+
+
+    Serial.print(">>  ");
+    Serial.print(" non_zero_cycle: ");
+    Serial.print(tank_joystick.non_zero_cycle);
+    Serial.print("   first_zero: ");
+    Serial.print(first_zero);
+    Serial.print("    ");
+
+  if (!tank_joystick.non_zero_cycle) {
+    if (!first_zero){
+      Serial.println("    "); // just for debug
+      return; // submit message over ESPnow if ther is input from JoyStick
+    }
+      
+    else
+    { // next time not to submit the zero
+      first_zero = false;
+    }    
+  } // of main IF
+  else { // we are in non zero cycle
+    first_zero = false;
+  }
+    
+  if (tank_joystick.non_zero_cycle) {
+    first_zero = true; // non zero cycle, set for next time
+  }
+
+
+  
+    // sends the data to the tank
     strcpy(myData.ctrl_msg, "I am the joystic");
     myData.x_val = tank_joystick.Xval;
     myData.y_val = tank_joystick.Yval;

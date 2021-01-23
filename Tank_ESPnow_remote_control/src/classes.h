@@ -16,6 +16,9 @@ class joystic {
   //bool Push_button_state = false;
   bool ON_state = false ;
   bool change_occured; // is this read different than previous?
+                        // not sure if it is a good idea - perhaps better to send 
+                        // all non-sero
+  bool non_zero_cycle;
   int Xpin,Ypin,PushButtpin; // the hardwrae pins of the ESP32
   int mouse_mov_range;
   bool butt_pressed = false; // indicates if joystic's button was pressed
@@ -61,17 +64,7 @@ class joystic {
     int t_rdX = analogRead(Xpin);
     int t_rdY = analogRead(Ypin);
    
-   // read of putton is done by interrupt
-   /*
-    int butt_tmp =  digitalRead(PushButtpin);
-
-    if (butt_tmp == HIGH) {
-      if (ON_state == true )
-        ON_state = false;
-      else
-        ON_state = false;
-    }
-    */ 
+   
 
 /*
    Serial.println("  ");
@@ -106,14 +99,23 @@ class joystic {
    Serial.print(butt_pressed);
   */ 
 
-    
+  non_zero_cycle = false;
+  if ((Xval != 0) || (Yval != 0) || (butt_pressed)) {
+    non_zero_cycle = true;
+  }
+  
+
+ 
+
+    change_occured = false;
     if ((Xval != prev_x) || (Yval != prev_y) || (butt_pressed)) {
       change_occured = true;
-      Serial.print("  ------   change occured ...... in class, read_jostick    ");
+      //Serial.print("  ------   change occured ...... in class, read_jostick    ");
       //print_it();
     }      
-    else
-      change_occured = false;
-  }
+
+    butt_pressed = false; // if set previously by interrupt routine, now reset it for future
+    
+  } // of read_jostick(0 routine)
 }; // of class JOYSTICK
 
