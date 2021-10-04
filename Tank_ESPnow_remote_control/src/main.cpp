@@ -3,12 +3,12 @@
 #include <classes.h>
 
 // GPIOs numbers on ESP32
-const int XPin    = 36;
-const int YPin    = 39;
-const int PushButton_PIN  = 34;
-const int LED1 = 18;
-const int LED2 = 5;
-const int LED3 = 4;
+const int XPin    = 36;         // GPIO VP
+const int YPin    = 39;         // GPIO VN
+const int PushButton_PIN  = 34; // GPIO34
+const int LED1 = 18;            // GPIO 18
+const int LED2 = 5;             // GPIO 5
+const int LED3 = 4;             // GPIO 4
 
 int mouse_range = 12; // the max of the mouse change
 

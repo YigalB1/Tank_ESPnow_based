@@ -4,8 +4,8 @@
 
 
 Tank my_tank;
-Motor motor_left;
-Motor motor_right;
+//Motor motor_left; // canceled Oct 2, these are within Tank class
+//Motor motor_right;
 int rc_x = 0;
 int rc_y = 0;
 int range=12; // perhaps this should be bessaged from RC, becaue same value here and there
@@ -36,9 +36,60 @@ void setup()
   Serial.begin(9600);
   Serial.print("");
   Serial.println("in SETUP: Starting");
-   
+
+  
+
+/*
+  // debug PWM 
+  const int freq = 30000;
+  const int pwmChannel_0 = 0;
+  const int pwmChannel_1 = 1;
+  const int resolution = 8;
+  int dutyCycle = 200;
+   // configure LED PWM functionalitites
+  ledcSetup(pwmChannel_0, freq, resolution);
+  ledcSetup(pwmChannel_1, freq, resolution);
+  
+  // attach the channel to the GPIO to be controlled
+  ledcAttachPin(PWMA_pin, pwmChannel_0);
+  ledcAttachPin(PWMB_pin, pwmChannel_1);
+  ledcWrite(pwmChannel_0, dutyCycle); 
+  ledcWrite(pwmChannel_1, dutyCycle); 
+
+  while(true) {
+    dutyCycle =0;
+    while (dutyCycle <= 255){
+      ledcWrite(pwmChannel_0, dutyCycle);   
+      ledcWrite(pwmChannel_1, dutyCycle);   
+      Serial.print("Forward with duty cycle: ");
+      Serial.println(dutyCycle);
+      dutyCycle += 30;
+      delay(500);
+    } // inner while()
+  dutyCycle = 200;
+
+
+
+    delay(2000);
+  }// endless while()
+
+  */
+
+
+  Serial.println("here 1");
   WiFi.mode(WIFI_MODE_STA);
+  Serial.println("here 2");
   Serial.println(WiFi.macAddress());
+  Serial.println("here 3");
+
+  
+  int cnt=0;
+  while(true) {
+    Serial.println(cnt++);
+    delay(1000);
+
+  }
+  
 
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
@@ -123,11 +174,87 @@ void setup()
 
 // ***************** LOOP ************
 
-int test_speed = 100;
+void test_motors() {
+  //int test_speed = 100;
+  int tmp_inc = 40;
+  int tmp_delay = 2000;
+  bool led_flag = false;
+
+  my_tank.tank_go_vector(0,0,0,SERVO_RANGE); // stop both engines
+  delay(500);
+
+  Serial.println("Going forward");
+  
+  for (int y=0;y<SERVO_RANGE;y+=tmp_inc) {
+    if (led_flag) {
+      led_flag = false;
+      my_tank.moving_led.turn_led_on();
+    } // of IF 
+    else {
+      led_flag = true;
+      my_tank.moving_led.turn_led_off();
+    } // of ELSE
+    
+    Serial.print("  y= ");
+    Serial.print(y);
+    my_tank.tank_go_vector(0,y,0,SERVO_RANGE);   
+    delay(tmp_delay);
+  } // of for() loop
+  Serial.println("Going BackWards");
+
+  my_tank.tank_go_vector(0,0,0,SERVO_RANGE); // stop both engines
+  delay(500);
+
+  for (int y=0;abs(y)<SERVO_RANGE;y-=tmp_inc) {
+      if (led_flag) {
+      led_flag = true;
+      my_tank.moving_led.turn_led_on();
+    }
+    else {
+      led_flag = false;
+      my_tank.moving_led.turn_led_off();
+    }
+
+
+    Serial.print("  y= ");
+    Serial.print(y);
+    my_tank.tank_go_vector(0,y,0,-SERVO_RANGE);   
+    delay(tmp_delay);
+  } // of for() loop
+  //Serial.println("end of Y cycle, starting X cycle");
+
+} // of test_motors() 
+
+void test_tank() {
+  int inc=40;
+  Serial.println("FORWARD  ");
+  for (int speed=0;speed<SERVO_RANGE;speed+=inc) {
+    //Serial.print(speed);
+    //Serial.print("  ");
+    my_tank.Tank_forward(speed);
+    delay(2000);
+  } // of for() 
+
+  my_tank.tank_stop();
+  Serial.println("");
+  Serial.println("BACKWARD");
+  for (int speed=0;speed<SERVO_RANGE;speed+=inc) {
+    //Serial.print(speed);
+    //Serial.print("  ");
+    my_tank.Tank_backward(speed);
+    delay(2000);
+  } // of for()
+  my_tank.tank_stop();
+  Serial.println("");
+  
+}
+
 
 void loop() 
 {
-     delay(100);
+     //delay(100);
+     //test_motors();
+     test_tank();
 } // of LOOP
 
 

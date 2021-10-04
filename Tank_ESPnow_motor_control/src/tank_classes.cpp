@@ -23,29 +23,50 @@ class Motor {
     motor_en2 = _in2;
     motor_pwm = _pwm;
     pwm_channel = _pwm_channel;
+
+    pinMode(PWMA_pin, OUTPUT);
+    pinMode(PWMB_pin, OUTPUT);
+    
     speed=0;
   } // of INIT routine
 
   void Go_forward ( int _speed_) {
-/*
-Serial.println("");
-Serial.print("  In go _FWD . _speed_:");
-Serial.print(_speed_);
-Serial.print("  pwm_channel:  ");
-Serial.print(pwm_channel);
-Serial.print("  motor_en1:  ");
-Serial.print(motor_en1);
-Serial.print("  motor_en2:  ");
-Serial.println(motor_en2);
-*/
+    Serial.println("");
+    Serial.print("/////  In go _FWD . _speed_ :");
+    Serial.print(_speed_);
+    Serial.print("   pwm_channel: ");
+    Serial.println(pwm_channel);
+
+    //Serial.print("  pwm_channel:  ");
+    //Serial.print(pwm_channel);
+    //Serial.print("  motor_en1:  ");
+    //Serial.print(motor_en1);
+    //Serial.print("  motor_en2:  ");
+    //Serial.println(motor_en2);
+    speed = _speed_; // set the class global value
+    digitalWrite(motor_en1, HIGH);
+    digitalWrite(motor_en2, LOW );
+    //analogWrite(motor_pwm, _speed_);
+    ledcWrite(pwm_channel, speed);
+  } // of Go_forward
 
 
-      speed = _speed_; // set the class global value
-      digitalWrite(motor_en1, HIGH);
-      digitalWrite(motor_en2, LOW );
-      //analogWrite(motor_pwm, _speed_);
-      ledcWrite(pwm_channel, speed);
-    } // of Go_forward
+  void Go_backward ( int _speed_) {
+    Serial.println("");
+    Serial.print("---->  In go BW   _speed_:");
+    Serial.print(_speed_);
+    Serial.print("   pwm_channel: ");
+    Serial.println(pwm_channel);
+
+    speed = _speed_; // set the class global value
+    digitalWrite(motor_en1, LOW);
+    digitalWrite(motor_en2, HIGH );
+    //analogWrite(motor_pwm, _speed_);
+    ledcWrite(pwm_channel, abs(speed));
+  } // of Go_backward()
+
+
+
 
 /*
   String debug_msg() {
@@ -86,20 +107,10 @@ Serial.println(motor_en2);
   void Go_pivot_left(int _l_speed, int _r_speed) {
   }
 
-  public: void Go_pivot_right(int _speed) {
+  void Go_pivot_right(int _speed) {
   }
-
-
-    
-
-
-    void Go_backward ( int _speed_) {
-      speed = _speed_; // set the class global value
-      digitalWrite(motor_en1, LOW);
-      digitalWrite(motor_en2, HIGH );
-      //analogWrite(motor_pwm, _speed_);
-      ledcWrite(pwm_channel, speed);
-    } // of Go_backward
+  
+  
 
 
     void stop () {
@@ -187,8 +198,7 @@ class US_Sensor {
   int echo_pin;
 
   void dum() {
-
-  }
+  } // of dum()
 
   void init(int _trig, int _echo) {
     trig_pin = _trig;
@@ -212,16 +222,25 @@ class US_Sensor {
   }
 }; // of Sensor class
 
+class led {
+  public:
 
+  void turn_led_on() {
+    digitalWrite(LED_MOV_pin,HIGH);
+  } // of turn_led_on()
+   
+    void turn_led_off() {
+    digitalWrite(LED_MOV_pin,LOW);
+  } // turn_led_off()
+}; // of LED class
 
 
 
 class Tank {
-  
-
   public:
   Motor left_motor;
   Motor right_motor;
+  led moving_led;
   //Servo f_servo; //initialize a servo object
   //Servo b_servo; //initialize a servo object
   //Servo r_servo; //initialize a servo object
@@ -320,32 +339,37 @@ class Tank {
     Serial.print("..");
     Serial.print(y_speed);
 
-    if (_x==0 && _y==0) {
+    //if (_x==0 && _y==0) {
+    if (x_speed==0 && y_speed==0) {
       Serial.println("  stop");
       left_motor.stop();
       right_motor.stop();
       return;
     }
 
-    if (_x==0 && _y>0) {
+    //if (_x==0 && _y>0) {
+    if (x_speed==0 && y_speed>0) {
       Serial.println("  forward");
       Tank_forward(y_speed);      
       return;
     }
 
-    if (_x==0 && _y<0) {
+    //if (_x==0 && _y<0) {
+    if (x_speed==0 && y_speed<0) {
       Serial.println("  backward");
       Tank_backward(y_speed);
       return;
     }
 
-    if (_x>0 && _y==0) {
+    //if (_x>0 && _y==0) {
+    if (x_speed>0 && y_speed==0) {
       Serial.println("  Right Pivot");
       Tank_right_pivot(x_speed);
       return;
     }
 
-    if (_x<0 && _y==0) {
+    //if (_x<0 && _y==0) {
+    if (x_speed<0 && y_speed==0) {
       Serial.println("  Left Pivot");
       Tank_left_pivot(x_speed);
       return;

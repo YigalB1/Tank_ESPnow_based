@@ -57,7 +57,7 @@ const int BACKARD = 0;
 const int MOTOR_FREQ = 5000;
 const int SERVO_FREQ = 50;
 const int L_PWM_Channel = 0;
-const int R_PWM_Channel = 1;
+const int R_PWM_Channel = 1; // 2 Oct 2o21: changed to 2, maybe 1 is paired with 0
 const int PWM_REOLUTION = 8; // 10 bit resulation: speed until 1023 . Maybe 8? 
 const int SERVO_RANGE = 255; // pow(2,PWM_REOLUTION); // 255 ; // because 8 bit 
 
